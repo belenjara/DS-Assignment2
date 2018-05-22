@@ -1,10 +1,11 @@
-package messages.server;
+package messages.types;
 
 import activitystreamer.server.Connection;
 import activitystreamer.server.Control;
 import activitystreamer.util.Response;
 import activitystreamer.util.Settings;
-import connections.server.AnnouncedServer;
+import datalists.server.AnnouncedServer;
+import messages.util.Message;
 
 public class ServerAnnounce {	
 	public Boolean sendServerAnnounce() {

@@ -17,6 +17,8 @@ public class Settings {
 	private static int activityInterval = 5000; // milliseconds
 	private static String secret = null;
 	private static String username = "anonymous";
+	private static int reConnTimeLimit = 10000; // milliseconds
+	private static int reSendTimeLimit = 10500; // milliseconds
 
 	
 	public static int getLocalPort() {
@@ -95,6 +97,22 @@ public class Settings {
 	public static String nextSecret() {
 	    return new BigInteger(130, random).toString(32);
 	 }
+
+	public static int getConnTimeLimit() {
+		return reConnTimeLimit;
+	}
+
+	public static void setConnTimeLimit(int connTimeLimit) {
+		Settings.reConnTimeLimit = connTimeLimit;
+	}
+
+	public static int getReSendTimeLimit() {
+		return reSendTimeLimit;
+	}
+
+	public static void setReSendTimeLimit(int reSendTimeLimit) {
+		Settings.reSendTimeLimit = reSendTimeLimit;
+	}
 
 
 

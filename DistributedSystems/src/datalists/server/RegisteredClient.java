@@ -1,4 +1,4 @@
-package connections.server;
+package datalists.server;
 
 public class RegisteredClient {
     private String username;

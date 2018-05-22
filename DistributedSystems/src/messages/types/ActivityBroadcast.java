@@ -1,8 +1,9 @@
-package messages.server;
+package messages.types;
 
 import activitystreamer.server.Connection;
 import activitystreamer.server.Control;
 import activitystreamer.util.Response;
+import messages.util.Message;
 
 public class ActivityBroadcast {
 	

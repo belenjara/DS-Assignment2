@@ -1,12 +1,13 @@
-package messages.server;
+package messages.types;
 
 import java.util.ArrayList;
 import activitystreamer.server.Connection;
 import activitystreamer.server.Control;
 import activitystreamer.util.Response;
-import connections.server.RegisteredClient;
+import datalists.server.RegisteredClient;
+import messages.util.Message;
 
-public class ActivityMsg {
+public class ActivityMessage {
 
 	//sendActivityMsg is already configured in the client (GUI) - Do we need to worry about the client sending the message well formatted? I think the client writes the whole JSON Code
 

@@ -1,11 +1,12 @@
-package messages.server;
+package messages.types;
 
 import java.util.ArrayList;
 
 import activitystreamer.server.Connection;
 import activitystreamer.server.Control;
 import activitystreamer.util.Response;
-import connections.server.RegisteredClient;
+import datalists.server.RegisteredClient;
+import messages.util.Message;
 
 public class Login {
 

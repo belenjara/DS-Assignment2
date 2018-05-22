@@ -22,7 +22,7 @@ import org.json.simple.parser.ParseException;
 
 import activitystreamer.server.Control;
 import activitystreamer.util.Settings;
-import messages.server.Message;
+import messages.util.Message;
 
 public class ClientSkeleton extends Thread {
 	private static final Logger log = LogManager.getLogger();

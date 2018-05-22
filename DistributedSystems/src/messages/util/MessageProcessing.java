@@ -1,4 +1,4 @@
-package messages.server;
+package messages.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,13 @@ import org.apache.logging.log4j.Logger;
 
 import activitystreamer.server.Connection;
 import activitystreamer.util.Response;
+import messages.types.ActivityBroadcast;
+import messages.types.ActivityMessage;
+import messages.types.Authentication;
+import messages.types.Login;
+import messages.types.Redirection;
+import messages.types.Register;
+import messages.types.ServerAnnounce;
 
 public class MessageProcessing {
 	private static final Logger log = LogManager.getLogger();
@@ -31,13 +38,12 @@ public class MessageProcessing {
 			responses.add(response);
 			break;
 		
-		
-		case Message.LOCK_REQUEST:
-			conn.setType(Connection.TYPE_SERVER);
-			Lock lockrequest = new Lock(message.getUsername(), message.getSecret());
-			response = lockrequest.receiveLockRequest(conn, message);
-			responses.add(response);
-			break;
+//		case Message.LOCK_REQUEST:
+//			conn.setType(Connection.TYPE_SERVER);
+//			Lock lockrequest = new Lock(message.getUsername(), message.getSecret());
+//			response = lockrequest.receiveLockRequest(conn, message);
+//			responses.add(response);
+//			break;
 			
 		case Message.LOGIN:
 			conn.setType(Connection.TYPE_CLIENT);
@@ -68,7 +74,7 @@ public class MessageProcessing {
 			
 		case Message.ACTIVITY_MESSAGE:
 			conn.setType(Connection.TYPE_CLIENT);
-			response = new ActivityMsg().receiveActivityMsg(message, conn);
+			response = new ActivityMessage().receiveActivityMsg(message, conn);
 			responses.add(response);
 			break;
 			
@@ -91,19 +97,19 @@ public class MessageProcessing {
 			responses.add(response);
 			break;
 			
-		case Message.LOCK_ALLOWED:
-			conn.setType(Connection.TYPE_SERVER);
-			Lock lockAllowed = new Lock(message.getUsername(), message.getSecret());
-			response = lockAllowed.receiveLockAllowed(conn, message);
-			responses.add(response);
-			break;
+//		case Message.LOCK_ALLOWED:
+//			conn.setType(Connection.TYPE_SERVER);
+//			Lock lockAllowed = new Lock(message.getUsername(), message.getSecret());
+//			response = lockAllowed.receiveLockAllowed(conn, message);
+//			responses.add(response);
+//			break;
 						
-		case Message.LOCK_DENIED:
-			conn.setType(Connection.TYPE_SERVER);
-			Lock lockDenied = new Lock(message.getUsername(), message.getSecret());
-			response = lockDenied.receiveLockDenied(conn, message);
-			responses.add(response);
-			break;
+//		case Message.LOCK_DENIED:
+//			conn.setType(Connection.TYPE_SERVER);
+//			Lock lockDenied = new Lock(message.getUsername(), message.getSecret());
+//			response = lockDenied.receiveLockDenied(conn, message);
+//			responses.add(response);
+//			break;
 			
 		case Message.INVALID_MESSAGE:
 			response.setMessage(message.toString());

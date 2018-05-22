@@ -1,4 +1,4 @@
-package messages.server;
+package messages.types;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -7,6 +7,8 @@ import activitystreamer.server.Connection;
 import activitystreamer.server.Control;
 import activitystreamer.util.Response;
 import activitystreamer.util.Settings;
+import messages.util.Message;
+import messages.util.MessageWrapper;
 
 public class Authentication {
 
@@ -64,7 +66,15 @@ public class Authentication {
 		
 		String msgStr = msg.toString();
 		log.info("Sending authentication msg: " + msgStr);
-		conn.writeMsg(msgStr);
+		
+		//Create the message to be placed on the threads queue
+		MessageWrapper msgForQueue = new MessageWrapper(false, msgStr);	
+		////Place the message on the client's / or other server's queue
+		conn.getMessageQueue().add(msgForQueue);
+		
+		//// we don't use this write method directly, 
+		//// we put every message in the queue of the connection to be send (see Connection.java)	
+		////conn.writeMsg(msgStr);
 	}
 	
 }

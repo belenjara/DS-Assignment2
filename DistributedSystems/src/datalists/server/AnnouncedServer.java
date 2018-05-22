@@ -1,5 +1,5 @@
-package connections.server;
-import messages.server.Message;
+package datalists.server;
+import messages.util.Message;
 
 public class AnnouncedServer {
 	private String serverId;

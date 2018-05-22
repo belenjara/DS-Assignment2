@@ -1,4 +1,4 @@
-package messages.server;
+package messages.util;
 
 import java.util.HashMap;
 
@@ -10,7 +10,7 @@ import org.json.simple.parser.ParseException;
 
 public class Message {
 	private static final Logger log = LogManager.getLogger();
-	
+		
 	private String command;
 	private String info;
 	private String username;
