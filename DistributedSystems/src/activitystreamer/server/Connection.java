@@ -165,7 +165,7 @@ public class Connection extends Thread {
 	}
 
 	public void setAuth(Boolean auth) {
-		auth = auth;
+		this.auth = auth;
 	}
 
 	public BlockingQueue<MessageWrapper> getMessageQueue() {

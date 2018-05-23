@@ -20,10 +20,10 @@ public class Authentication {
 	 * @param msg
 	 * @return
 	 */
-	public Response processAuthentication(Connection conn,Message msg) {
+	public Response processAuthentication(Connection conn, Message msg) {
 		Response response = new Response();
 		Control connMan = Control.getInstance();
-        Boolean isAuth = connMan.serverIsAuthenticated(conn);
+		Boolean isAuth = connMan.serverIsAuthenticated(conn);
 		//check if the server had already successfully authenticated
 		if (isAuth) {
 			msg.setCommand(Message.INVALID_MESSAGE);
@@ -32,14 +32,14 @@ public class Authentication {
 			response.setMessage(msg.toString());
 			return response;
 		}
-		
+
 		msg = Message.CheckMessage(msg, Message.SECRET);
 		if (msg.getCommand().equals(Message.INVALID_MESSAGE)) {
 			response.setCloseConnection(true);
 			response.setMessage(msg.toString());
 			return response;
 		}	
-		
+
 		// check the secret
 		if (!msg.getSecret().equals(Settings.getSecret())) {
 			msg.setCommand(Message.AUTHENTICATION_FAIL);
@@ -48,13 +48,23 @@ public class Authentication {
 			response.setMessage(msg.toString());
 			return response;
 		}
+
+		// we added the Id of the server as a new property in AUTHENTICATE message
+		msg = Message.CheckMessage(msg, Message.ID_SERVER);
+		if (msg.getCommand().equals(Message.INVALID_MESSAGE)) {
+			response.setCloseConnection(true);
+			response.setMessage(msg.toString());
+			return response;
+		}	 
+		
 		// do nothing if the authentication succeeded.
 		conn.setAuth(true);
-		response.setMessage(null);
+		conn.setIdClientServer(msg.getId());
+		response.setMessage(null); //// here we have to add the new response of authentication....
 		response.setCloseConnection(false);
 		return response;
 	}
-	
+
 	/**
 	 * Sent from one server to another always and only as the first message when connecting.
 	 * @param conn
@@ -64,17 +74,20 @@ public class Authentication {
 		msg.setCommand(Message.AUTHENTICATE);
 		msg.setSecret(Settings.getSecret());
 		
+		// we added the Id of the server as a new property in AUTHENTICATE message
+		msg.setId(Control.getInstance().getServerId());
+
 		String msgStr = msg.toString();
 		log.info("Sending authentication msg: " + msgStr);
-		
+
 		//Create the message to be placed on the threads queue
 		MessageWrapper msgForQueue = new MessageWrapper(false, msgStr);	
 		////Place the message on the client's / or other server's queue
 		conn.getMessageQueue().add(msgForQueue);
-		
+
 		//// we don't use this write method directly, 
 		//// we put every message in the queue of the connection to be send (see Connection.java)	
 		////conn.writeMsg(msgStr);
 	}
-	
+
 }

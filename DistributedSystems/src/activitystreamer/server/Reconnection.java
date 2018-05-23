@@ -1,11 +1,6 @@
 package activitystreamer.server;
 
-import java.io.IOException;
-import java.net.Socket;
-import java.net.UnknownHostException;
-
 import activitystreamer.util.Settings;
-import messages.types.Authentication;
 
 public class Reconnection {
 
@@ -24,10 +19,11 @@ public class Reconnection {
 	private Reconnection(Connection conn) {
 		this.conn = conn;
 
+		// I'm the parent
 		if (conn.isIncommingConn()) {
 			reSendChildMsgQueue();
 		}
-		else {
+		else { // I'm the child
 			reconnectParent();
 		}
 	}
@@ -69,9 +65,7 @@ public class Reconnection {
 		Control control = Control.getInstance();
 
 		while ((startTime - System.currentTimeMillis()) >= duration) {
-			// revisar connections list si encuentro por id de servidor o id de cliente
-
-			control.reSendMsg(conn);
+			control.transferMsgQueue(conn);
 			////if the old connection is closed, it means that the old queue  messages were added in the new connection queue.
 			if (conn.getStatus().equals(Connection.STATUS_CONN_DISABLED)) {
 				break;

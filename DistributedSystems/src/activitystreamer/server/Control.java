@@ -27,7 +27,7 @@ public class Control extends Thread {
 
 	private static ArrayList<RegisteredClient> registeredClients;
 
-	
+
 	//// TODO: add logged clients list...
 
 	private static boolean term=false;
@@ -75,7 +75,7 @@ public class Control extends Thread {
 		// make a connection to another server if remote hostname is supplied
 		if(Settings.getRemoteHostname()!=null){
 			try {				
-				Connection conn = outgoingConnection(new Socket(Settings.getRemoteHostname(),Settings.getRemotePort()));
+				Connection conn = outgoingConnection(new Socket(Settings.getRemoteHostname(), Settings.getRemotePort()));				
 				//// Authentication to other server.
 				log.info("I'm going to authenticate...");
 				Authentication auth = new Authentication();
@@ -94,7 +94,7 @@ public class Control extends Thread {
 			}
 		}
 	}
-	
+
 
 	/*
 	 * Processing incoming messages from the connection.
@@ -111,12 +111,12 @@ public class Control extends Thread {
 			if (response.getMessage() != null && !response.getMessage().equals("")) {
 				//// Write the response to the client (or server).
 				log.info("I will respond this to the client: " + response.getMessage());
-				
+
 				//Create the message to be placed on the threads queue
 				MessageWrapper msgForQueue = new MessageWrapper(false, response.getMessage());	
 				////Place the message on the client's / or other server's queue
 				con.getMessageQueue().add(msgForQueue);
-				
+
 				//// we don't use this write method directly, 
 				//// we put every message in the queue of the connection to be send (see Connection.java)
 				//con.writeMsg(response.getMessage());
@@ -145,6 +145,7 @@ public class Control extends Thread {
 	public synchronized Connection incomingConnection(Socket s) throws IOException{
 		log.info("incomming connection: "+Settings.socketAddress(s));
 		Connection c = new Connection(s);
+		c.setIncommingConn(true);
 		connections.add(c);
 		return c;
 
@@ -156,6 +157,7 @@ public class Control extends Thread {
 	public synchronized Connection outgoingConnection(Socket s) throws IOException{
 		log.debug("outgoing connection: "+Settings.socketAddress(s));
 		Connection c = new Connection(s);
+		c.setIncommingConn(false);
 		connections.add(c);
 		return c;
 
@@ -231,14 +233,12 @@ public class Control extends Thread {
 					break;
 				}
 			}
-			
+
 			if (!exist) {
-			  Control.announcedServers.add(announcedServer);
+				Control.announcedServers.add(announcedServer);
 			}
 		}
-	}
-	
-	
+	}	
 
 	/**
 	 * Get the list of clients that are registered.
@@ -271,12 +271,12 @@ public class Control extends Thread {
 				if (!isSender) {
 					//log.info("Msg broadcast to servers : " + msg);
 					System.out.println("I'm going to send a broadcast to only servers: " + msg);
-					
+
 					//Create the message to be placed on the threads queue
 					MessageWrapper msgForQueue = new MessageWrapper(false, msg);	
 					////Place the message on the client's / or other server's queue
 					sc.getMessageQueue().add(msgForQueue);
-					
+
 					//// we don't use this write method directly, 
 					//// we put every message in the queue of the connection to be send (see Connection.java)
 					//sc.writeMsg(msg);
@@ -300,13 +300,13 @@ public class Control extends Thread {
 				//// We don't want to send to the original sender
 				if (!isSender) {
 					System.out.println("I'm going to send a broadcast to all S + C: " + msg);
-					
+
 					//Create the message to be placed on the threads queue
 					MessageWrapper msgForQueue = new MessageWrapper(false, msg);	
 					////Place the message on the client's / or other server's queue
 					c.getMessageQueue().add(msgForQueue);
-					
-				    //// we don't use this write method directly, 
+
+					//// we don't use this write method directly, 
 					//// we put every message in the queue of the connection to be send (see Connection.java)
 					////c.writeMsg(msg);
 				}	
@@ -356,50 +356,58 @@ public class Control extends Thread {
 	public void setServerId(String serverId) {
 		Control.serverId = serverId;
 	}
-	
-	/*
-	 * Make a connection to another server using the supplied port and host. We use this for reconnection!
+
+	/**
+	 * Make a connection to another server using the supplied port and host. We use this for reconnection.
+	 * @param oldConnection
 	 */
 	public void reInitiateConnection(Connection oldConnection) {
 		// make a connection to another server if remote hostname is supplied
 		int port = 0;
 		String host = null;
 
-			try {	
-				 port = oldConnection.getSocket().getPort();
-				 host = oldConnection.getSocket().getInetAddress().toString();
-								 
-				 Socket socket = new Socket(host, port);
-				 
-				 oldConnection.setSocket(socket);
-				
-				//// Authentication to other server.
-				log.info("I'm going to re-authenticate...");
-				Authentication auth = new Authentication();
-				auth.doAuthentication(oldConnection);
+		try {	
+			port = oldConnection.getSocket().getPort();
+			host = oldConnection.getSocket().getInetAddress().toString();
 
-				if (oldConnection.isOpen() && connections.contains(oldConnection)) {
-					oldConnection.setStatus(Connection.STATUS_CONN_OK);
-					//// The connection is updated, type server is specified and that is authenticated.
-					oldConnection.setType(Connection.TYPE_SERVER);
-					oldConnection.setAuth(true);
-				}		
-			} catch (UnknownHostException e) {
-				log.info("The connection already exist.."); // to do: see what can I do here..
-			}catch (IOException e) {				
-				log.error("failed to make connection to "+host+":"+port+" :"+e);
-			}
-	}
-	
-	public void reSendMsg(Connection conn) {
-		for (Connection c : connections) {
-			if (c.getIdClientServer().equals(conn.getIdClientServer())) {
-				c.setMessageQueue(conn.getMessageQueue());
-				conn.setStatus(Connection.STATUS_CONN_DISABLED);
-				conn.closeCon();
-				break;
-			}
+			Socket socket = new Socket(host, port);
+
+			oldConnection.setSocket(socket);
+
+			//// Authentication to other server.
+			log.info("I'm going to re-authenticate...");
+			Authentication auth = new Authentication();
+			auth.doAuthentication(oldConnection);
+
+			if (oldConnection.isOpen() && connections.contains(oldConnection)) {
+				oldConnection.setStatus(Connection.STATUS_CONN_OK);
+				//// The connection is updated, type server is specified and that is authenticated.
+				oldConnection.setType(Connection.TYPE_SERVER);
+				oldConnection.setAuth(true);
+			}		
+		} catch (UnknownHostException e) {
+			log.info("The connection already exist.."); // to do: see what can I do here..
+		}catch (IOException e) {				
+			log.error("failed to make connection to "+host+":"+port+" :"+e);
 		}
 	}
 	
+	/**
+	 We use this method to add into the queue of a new connection the messages of an old connection queue.
+	 * This is used when a child connection is lost and we try to re-send the messages to this child when is back. 
+	 * @param conn
+	 */
+	public void transferMsgQueue(Connection conn) {
+		for (Connection c : connections) {
+			if (c.getAuth() && c.isOpen()) {
+				if (c.getIdClientServer().equals(conn.getIdClientServer())) {
+					c.setMessageQueue(conn.getMessageQueue());
+					conn.setStatus(Connection.STATUS_CONN_DISABLED);
+					conn.closeCon();
+					break;
+				}
+			}
+		}
+	}
+
 }

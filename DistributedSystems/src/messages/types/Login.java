@@ -68,6 +68,7 @@ public class Login {
 			msg.setCommand(Message.LOGIN_SUCCESS);
 			msg.setInfo(String.format(Message.LOGIN_SUCCESS_INFO, username));
 			response.setCloseConnection(false);
+			conn.setIdClientServer(msg.getUsername());
 			//System.out.println("login success!");
 			conn.setAuth(true);
 		}else {
