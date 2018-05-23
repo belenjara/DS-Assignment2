@@ -37,7 +37,7 @@ public class Reconnection {
 		long duration = Settings.getConnTimeLimit();
 		Control control = Control.getInstance();
 
-		while ((startTime - System.currentTimeMillis()) >= duration) {
+		while ((startTime - System.currentTimeMillis()) <= duration) {
 			control.reInitiateConnection(conn);	
 			if (conn.getStatus().equals(Connection.STATUS_CONN_DISABLED)){
 				break;

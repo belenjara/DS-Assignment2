@@ -59,6 +59,9 @@ public class Control extends Thread {
 
 		// Initialize the announced servers list.
 		announcedServers = new ArrayList<AnnouncedServer>();
+		
+		//// Server Id...		
+		setServerId(Settings.nextSecret());
 
 		initiateConnection();
 
@@ -74,10 +77,7 @@ public class Control extends Thread {
 			try {				
 				Connection conn = outgoingConnection(new Socket(Settings.getRemoteHostname(), Settings.getRemotePort()));				
 				conn.setPort(Settings.getRemotePort());
-				conn.setHost(Settings.getRemoteHostname());
-				
-				//// Server Id...		
-				setServerId(Settings.nextSecret());
+				conn.setHost(Settings.getRemoteHostname());			
 				
 				conn.setIdClientServer(serverId);
 				
