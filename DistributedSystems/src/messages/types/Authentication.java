@@ -74,8 +74,10 @@ public class Authentication {
 		msg.setCommand(Message.AUTHENTICATE);
 		msg.setSecret(Settings.getSecret());
 		
+		Control control = Control.getInstance();
+		
 		// we added the Id of the server as a new property in AUTHENTICATE message
-		msg.setId(Control.getInstance().getServerId());
+		msg.setId(conn.getIdClientServer());
 
 		String msgStr = msg.toString();
 		log.info("Sending authentication msg: " + msgStr);
