@@ -83,7 +83,7 @@ public class Login {
 	}
 
 	//find the secret for an entered username, if the username isn't stored, then return secret as null
-	public String findSecret (String username,ArrayList<RegisteredClient> registeredClients) {
+	private String findSecret (String username,ArrayList<RegisteredClient> registeredClients) {
 
 		for(int i = 0; i < registeredClients.size(); i++) {
 			//find username
