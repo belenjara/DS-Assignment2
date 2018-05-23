@@ -76,6 +76,9 @@ public class Control extends Thread {
 		if(Settings.getRemoteHostname()!=null){
 			try {				
 				Connection conn = outgoingConnection(new Socket(Settings.getRemoteHostname(), Settings.getRemotePort()));				
+				conn.setPort(Settings.getRemotePort());
+				conn.setHost(Settings.getRemoteHostname());
+				
 				//// Authentication to other server.
 				log.info("I'm going to authenticate...");
 				Authentication auth = new Authentication();
@@ -363,32 +366,32 @@ public class Control extends Thread {
 	 */
 	public void reInitiateConnection(Connection oldConnection) {
 		// make a connection to another server if remote hostname is supplied
-		int port = 0;
-		String host = null;
+			
+		if(Settings.getRemoteHostname()!=null){
+			try {				
+				Socket socket = new Socket(oldConnection.getHost(), oldConnection.getPort());
+				Connection conn = outgoingConnection(socket);
+				//// Authentication to other server.
+				log.info("I'm going to authenticate...");
+				Authentication auth = new Authentication();
+				auth.doAuthentication(conn);
 
-		try {	
-			port = oldConnection.getSocket().getPort();
-			host = oldConnection.getSocket().getInetAddress().toString();
-
-			Socket socket = new Socket(host, port);
-
-			oldConnection.setSocket(socket);
-
-			//// Authentication to other server.
-			log.info("I'm going to re-authenticate...");
-			Authentication auth = new Authentication();
-			auth.doAuthentication(oldConnection);
-
-			if (oldConnection.isOpen() && connections.contains(oldConnection)) {
-				oldConnection.setStatus(Connection.STATUS_CONN_OK);
-				//// The connection is updated, type server is specified and that is authenticated.
-				oldConnection.setType(Connection.TYPE_SERVER);
-				oldConnection.setAuth(true);
-			}		
-		} catch (UnknownHostException e) {
-			log.info("The connection already exist.."); // to do: see what can I do here..
-		}catch (IOException e) {				
-			log.error("failed to make connection to "+host+":"+port+" :"+e);
+				if (conn.isOpen() && connections.contains(conn)) {
+					//// The connection is updated, type server is specified and that is authenticated.
+					conn.setType(Connection.TYPE_SERVER);
+					conn.setAuth(true);
+					
+					conn.setMessageQueue(oldConnection.getMessageQueue());
+					
+					oldConnection.setStatus(Connection.STATUS_CONN_DISABLED);
+				}
+				
+			} catch (UnknownHostException e) {
+				log.info("The connection already exist..");
+			}catch (IOException e) {				
+				log.error("failed to make connection to "+Settings.getRemoteHostname()+":"+Settings.getRemotePort()+" :"+e);
+				System.exit(-1);
+			}
 		}
 	}
 	
@@ -409,5 +412,4 @@ public class Control extends Thread {
 			}
 		}
 	}
-
 }

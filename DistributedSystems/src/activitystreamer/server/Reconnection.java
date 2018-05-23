@@ -39,20 +39,21 @@ public class Reconnection {
 
 		while ((startTime - System.currentTimeMillis()) >= duration) {
 			control.reInitiateConnection(conn);	
-			if (conn.getStatus().equals(Connection.STATUS_CONN_OK)){
+			if (conn.getStatus().equals(Connection.STATUS_CONN_DISABLED)){
 				break;
 			}
 		}
 
 		//// I could not connect again, I assumed the other server crashed. 	
 		if (conn.getStatus().equals(Connection.STATUS_CONN_ERROR)) {
-			//// Old connection gone.
-			conn.getMessageQueue().clear();
-			conn.closeCon();
-			control.connectionClosed(conn);
 
 			//// TODO: failure model protocol... (Yanlong protocol)
 		}
+		
+		//// Old connection gone.
+		conn.getMessageQueue().clear();
+		conn.closeCon();
+		control.connectionClosed(conn);
 	}
 
 	/**
@@ -72,7 +73,7 @@ public class Reconnection {
 			}
 		}
 		
-		if (!conn.getStatus().equals(Connection.STATUS_CONN_DISABLED)) {
+		if (conn.getStatus().equals(Connection.STATUS_CONN_ERROR)) {
 			//// announce that this client/server is dead? something went wrong..
 			//// if is a client maybe I have to send the queue to the root... (the other protocol aim time T, set X)
 		}

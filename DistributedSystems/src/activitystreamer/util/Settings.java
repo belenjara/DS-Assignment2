@@ -12,7 +12,7 @@ public class Settings {
 	private static SecureRandom random = new SecureRandom();
 	private static int localPort = 3780;
 	private static String localHostname = "localhost";
-	private static String remoteHostname = null;
+	private static String remoteHostname = "ec2-34-214-180-1.us-west-2.compute.amazonaws.com";
 	private static int remotePort = 3780;
 	private static int activityInterval = 5000; // milliseconds
 	private static String secret = null;

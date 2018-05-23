@@ -44,9 +44,13 @@ public class Connection extends Thread {
 	private String status;
 
 	private String idClientServer; // client username or server id.
+	
+	private int port;
+	private String host;
 
 	//// Our queue!
 	private BlockingQueue<MessageWrapper> messageQueue;
+	
 
 	Connection(Socket socket) throws IOException{
 		in = new DataInputStream(socket.getInputStream());
@@ -202,4 +206,19 @@ public class Connection extends Thread {
 		this.idClientServer = id;
 	}
 
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+	public String getHost() {
+		return host;
+	}
+
+	public void setHost(String host) {
+		this.host = host;
+	}
 }
