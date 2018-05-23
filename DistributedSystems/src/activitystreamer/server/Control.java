@@ -60,9 +60,6 @@ public class Control extends Thread {
 		// Initialize the announced servers list.
 		announcedServers = new ArrayList<AnnouncedServer>();
 
-		//// Server Id...		
-		setServerId(Settings.nextSecret());
-
 		initiateConnection();
 
 		start();
@@ -78,6 +75,10 @@ public class Control extends Thread {
 				Connection conn = outgoingConnection(new Socket(Settings.getRemoteHostname(), Settings.getRemotePort()));				
 				conn.setPort(Settings.getRemotePort());
 				conn.setHost(Settings.getRemoteHostname());
+				
+				//// Server Id...		
+				setServerId(Settings.nextSecret());
+				
 				conn.setIdClientServer(serverId);
 				
 				//// Authentication to other server.

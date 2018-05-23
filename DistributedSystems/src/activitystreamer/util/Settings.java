@@ -15,7 +15,7 @@ public class Settings {
 	private static String remoteHostname = "ec2-34-214-180-1.us-west-2.compute.amazonaws.com";
 	private static int remotePort = 3780;
 	private static int activityInterval = 5000; // milliseconds
-	private static String secret = null;
+	private static String secret = "jfjkdjgkdfjg";
 	private static String username = "anonymous";
 	private static int reConnTimeLimit = 10000; // milliseconds
 	private static int reSendTimeLimit = 10500; // milliseconds

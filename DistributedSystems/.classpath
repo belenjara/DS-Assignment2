@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry including="**/*.java" kind="src" path="src">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/gson-2.2.2.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/json_simple-1.1.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/slf4j-api-1.8.0-beta2.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/slf4j-jdk14-1.8.0-beta2.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-1.2-api-2.5.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-1.2-api-2.5-javadoc.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-1.2-api-2.5-sources.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-api-2.5.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-api-2.5-javadoc.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-api-2.5-sources.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-core-2.5.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-core-2.5-javadoc.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-core-2.5-sources.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-core-2.5-tests.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-flume-ng-2.5.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-flume-ng-2.5-javadoc.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-flume-ng-2.5-sources.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-iostreams-2.5.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-iostreams-2.5-javadoc.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-iostreams-2.5-sources.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-jcl-2.5.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-jcl-2.5-javadoc.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-jcl-2.5-sources.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-jmx-gui-2.5.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-jmx-gui-2.5-javadoc.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-jmx-gui-2.5-sources.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-jul-2.5.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-jul-2.5-javadoc.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-jul-2.5-sources.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-nosql-2.5.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-nosql-2.5-javadoc.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-nosql-2.5-sources.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-slf4j-impl-2.5.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-slf4j-impl-2.5-javadoc.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-slf4j-impl-2.5-sources.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-taglib-2.5.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-taglib-2.5-javadoc.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-taglib-2.5-sources.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-to-slf4j-2.5.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-to-slf4j-2.5-javadoc.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-to-slf4j-2.5-sources.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-web-2.5.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-web-2.5-javadoc.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/apache-log4j-2.5-bin/log4j-web-2.5-sources.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/commons-cli-1.3.1/commons-cli-1.3.1.jar"/>
+	<classpathentry kind="lib" path="/home/belen/eclipse-workspace/DS-Assignment2/DS-Assignment2/DistributedSystems/lib/commons-cli-1.3.1/commons-cli-1.3.1-javadoc.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>
