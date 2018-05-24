@@ -98,6 +98,10 @@ public class Server {
 			Settings.setSecret(cmd.getOptionValue("s"));
 		}
 		
+		if(cmd.hasOption("id")){
+			Settings.setIdServer(cmd.getOptionValue("id"));
+		}
+		
 		log.info("starting server");
 		
 		

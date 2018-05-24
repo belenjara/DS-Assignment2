@@ -12,13 +12,15 @@ public class Settings {
 	private static SecureRandom random = new SecureRandom();
 	private static int localPort = 3783;
 	private static String localHostname = "localhost";
-	private static String remoteHostname = "localhost";//"ec2-34-214-180-1.us-west-2.compute.amazonaws.com";
+	private static String remoteHostname = null;//"localhost";//"ec2-34-214-180-1.us-west-2.compute.amazonaws.com";
 	private static int remotePort = 3782;
 	private static int activityInterval = 5000; // milliseconds
 	private static String secret = "jfjkdjgkdfjg";
 	private static String username = "anonymous";
 	private static int reConnTimeLimit = 50000; // milliseconds
 	private static int reSendTimeLimit = 10500; // milliseconds
+	
+	private static String idServer = "juanita";
 
 	
 	public static int getLocalPort() {
@@ -112,6 +114,14 @@ public class Settings {
 
 	public static void setReSendTimeLimit(int reSendTimeLimit) {
 		Settings.reSendTimeLimit = reSendTimeLimit;
+	}
+
+	public static String getIdServer() {
+		return idServer;
+	}
+
+	public static void setIdServer(String idServer) {
+		Settings.idServer = idServer;
 	}
 
 

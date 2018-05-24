@@ -26,7 +26,7 @@ public class MessageReader extends Thread {
 				String receivedMessage = null;
 				while(this.conn.isOpen() && (receivedMessage = reader.readLine()) != null) {
 					//place the message in the queue for the client connection thread to process
-					MessageWrapper msg = new MessageWrapper(true, receivedMessage);
+					MessageWrapper msg = new MessageWrapper(true, receivedMessage, false);
 					messageQueue.add(msg);
 					conn.setStatus(Connection.STATUS_CONN_OK);
 				}

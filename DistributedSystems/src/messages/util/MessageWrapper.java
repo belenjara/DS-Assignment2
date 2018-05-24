@@ -7,10 +7,13 @@ public class MessageWrapper {
 	//// The message.
 	private String message;
 	
-	public MessageWrapper(boolean isFromOther, String message) {
+	private boolean closeConnection; 
+	
+	public MessageWrapper(boolean isFromOther, String message, boolean closeConnection) {
 		super();
 		this.isFromOther = isFromOther;
 		this.message = message;
+		this.closeConnection = closeConnection;
 		System.out.println("Message adding to queue: " + message);
 	}
 	
@@ -31,5 +34,13 @@ public class MessageWrapper {
 	}
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	public boolean isCloseConnection() {
+		return closeConnection;
+	}
+
+	public void setCloseConnection(boolean closeConnection) {
+		this.closeConnection = closeConnection;
 	}
 }

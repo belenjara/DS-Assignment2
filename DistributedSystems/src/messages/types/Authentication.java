@@ -80,7 +80,7 @@ public class Authentication {
 		log.info("Sending authentication msg: " + msgStr);
 
 		//Create the message to be placed on the threads queue
-		MessageWrapper msgForQueue = new MessageWrapper(false, msgStr);	
+		MessageWrapper msgForQueue = new MessageWrapper(false, msgStr, false);	
 		////Place the message on the client's / or other server's queue
 		conn.getMessageQueue().add(msgForQueue);
 

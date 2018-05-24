@@ -92,6 +92,7 @@ public class Connection extends Thread {
 				term=true;
 				inreader.close();
 				out.close();
+				//open = false;
 			} catch (IOException e) {
 				// already closed?
 				log.error("received exception closing the connection "+Settings.socketAddress(socket)+": "+e);
@@ -115,13 +116,12 @@ public class Connection extends Thread {
 				//(when the messageReader receives a message and places it on the queue
 				//or when another thread places a message on this client's queue)
 				MessageWrapper msg = null;
-				Thread.sleep(2000); // to give time to change the status of the connection
+				//Thread.sleep(1000); // to give time to change the status of the connection
 				if (this.status.equals(STATUS_CONN_OK)) {
 					msg = messageQueue.take(); //  this method take the message from the queue and remove it.
-					log.info("I will remove.. " + msg.getMessage());
 
 					if(msg.isFromOther()) {
-						term = Control.getInstance().process(this, msg.getMessage());
+						Control.getInstance().process(this, msg.getMessage());
 					} else {
 						//If the message is from a thread and it isn't exit, then
 						//it is a message that needs to be sent to the client
@@ -133,18 +133,23 @@ public class Connection extends Thread {
 					// Other thread in MessageReader.java will continue filling the queue.
 					// We are going to try to reconnect to the parent or to re-send queued messages to the child (server or client)
 					Reconnection.getInstance(this);
-				}					
+				}
+				
+				if (msg != null && msg.isCloseConnection()) {
+					open=false;
+					Control.getInstance().connectionClosed(this);
+					break;
+				}
 			}
 
-			log.debug("connection closed to "+Settings.socketAddress(socket));
+			//log.debug("connection closed to "+Settings.socketAddress(socket));
 			
 			//Control.getInstance().connectionClosed(this);
 			//in.close();
 		} catch (Exception e) {			
 			e.printStackTrace();
 		//	Control.getInstance().connectionClosed(this); //?
-		}
-		//open=false;
+		}	
 	}
 
 	public Socket getSocket() {

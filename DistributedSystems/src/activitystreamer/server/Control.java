@@ -60,8 +60,12 @@ public class Control extends Thread {
 		// Initialize the announced servers list.
 		announcedServers = new ArrayList<AnnouncedServer>();
 		
-		//// Server Id...		
-		setServerId(Settings.nextSecret());
+		//// Server Id...
+		if  (Settings.getIdServer() == null || Settings.getIdServer().equals("")) {
+			setServerId(Settings.nextSecret());
+		}else {
+			setServerId(Settings.getIdServer());
+		}
 
 		initiateConnection();
 
@@ -105,7 +109,7 @@ public class Control extends Thread {
 	 * Processing incoming messages from the connection.
 	 * Return true if the connection should close.
 	 */
-	public synchronized boolean process(Connection con, String msg){
+	public synchronized void process(Connection con, String msg){
 		//log.info("I received a msg from the client: " + msg);
 
 		//// Process the message according to its command. A list of responses is returned.
@@ -118,23 +122,11 @@ public class Control extends Thread {
 				log.info("I will respond this to the client: " + response.getMessage());
 
 				//Create the message to be placed on the threads queue
-				MessageWrapper msgForQueue = new MessageWrapper(false, response.getMessage());	
+				MessageWrapper msgForQueue = new MessageWrapper(false, response.getMessage(), response.getCloseConnection());	
 				////Place the message on the client's / or other server's queue
 				con.getMessageQueue().add(msgForQueue);
-
-				//// we don't use this write method directly, 
-				//// we put every message in the queue of the connection to be send (see Connection.java)
-				//con.writeMsg(response.getMessage());
 			}		
-			//// If is necessary to close the connection.
-			if (response.getCloseConnection()) {
-				log.info("I will close the client's connection..");
-				return true;
-			}
 		}
-
-		//// If is not necessary to close the connection for now.
-		return false;
 	}
 
 	/*
@@ -280,7 +272,7 @@ public class Control extends Thread {
 					//System.out.println("I'm going to send a broadcast to only servers: " + msg);
 
 					//Create the message to be placed on the threads queue
-					MessageWrapper msgForQueue = new MessageWrapper(false, msg);	
+					MessageWrapper msgForQueue = new MessageWrapper(false, msg, false);	
 					////Place the message on the client's / or other server's queue
 					sc.getMessageQueue().add(msgForQueue);
 
@@ -309,7 +301,7 @@ public class Control extends Thread {
 					//System.out.println("I'm going to send a broadcast to all S + C: " + msg);
 
 					//Create the message to be placed on the threads queue
-					MessageWrapper msgForQueue = new MessageWrapper(false, msg);	
+					MessageWrapper msgForQueue = new MessageWrapper(false, msg, false);	
 					////Place the message on the client's / or other server's queue
 					c.getMessageQueue().add(msgForQueue);
 
@@ -376,7 +368,7 @@ public class Control extends Thread {
 				
 				// try to reconnect not to fast and furious :)
 				try {
-					Thread.sleep(3000);
+					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -418,16 +410,27 @@ public class Control extends Thread {
 	 * This is used when a child connection is lost and we try to re-send the messages to this child when is back. 
 	 * @param conn
 	 */
-	public void transferMsgQueue(Connection conn) {
+	public boolean transferMsgQueue(Connection conn) {
+
+		// try to reconnect not to fast and furious :)
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		log.info("I'm going to try to send queued messages if there is an active connection of client/server => " + conn.getIdClientServer());
 		for (Connection c : connections) {
 			if (c.getAuth() && c.isOpen()) {
-				if (c.getIdClientServer().equals(conn.getIdClientServer())) {
+				if (!c.getStatus().equals(Connection.STATUS_CONN_DISABLED) && c.getIdClientServer().equals(conn.getIdClientServer())) {
+					log.info(conn.getStatus());
 					c.setMessageQueue(conn.getMessageQueue());
-					conn.setStatus(Connection.STATUS_CONN_DISABLED);
-					conn.closeCon();
-					break;
+					return true;
 				}
 			}
 		}
+		
+		return false;
 	}
 }
