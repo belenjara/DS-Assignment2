@@ -1,24 +1,25 @@
 package activitystreamer.server;
 
+import java.io.Console;
+
 import activitystreamer.util.Settings;
 
-public class Reconnection {
+public class Reconnection  {
 
 	Connection conn;
 	
 	protected static Reconnection reconn = null;
 
 	public static Reconnection getInstance(Connection conn) {
-//		if(reconn==null){
+       //if(reconn==null){
 			reconn=new Reconnection(conn);
-//		} 
+	   // } 
 		return reconn;
 	}
-
-
+	
 	private Reconnection(Connection conn) {
 		this.conn = conn;
-
+		
 		// I'm the parent
 		if (conn.isIncommingConn()) {
 			reSendChildMsgQueue();
@@ -30,29 +31,35 @@ public class Reconnection {
 
 	/**
 	 * When I'm the child and I want to reconnect to my parent server.
-	 */
+	 */ 
 	private void reconnectParent() {
 
 		long startTime = System.currentTimeMillis();
-		long duration = Settings.getConnTimeLimit();
+		long duration = startTime + Settings.getConnTimeLimit();
 		Control control = Control.getInstance();
-
-		while ((startTime - System.currentTimeMillis()) <= duration) {
-			control.reInitiateConnection(conn);	
-			if (conn.getStatus().equals(Connection.STATUS_CONN_DISABLED)){
+		
+		//// Old connection gone.
+		conn.closeCon();		
+		boolean status = false;
+		
+		while ((System.currentTimeMillis()) < duration) {
+			System.out.println("........... try to reconnect ...........");
+			
+			status = control.reInitiateConnection(conn);	
+			if (status == true){
+				conn.setStatus(Connection.STATUS_CONN_OK);
 				break;
 			}
 		}
 
 		//// I could not connect again, I assumed the other server crashed. 	
-		if (conn.getStatus().equals(Connection.STATUS_CONN_ERROR)) {
+		if (!status) {
 
 			//// TODO: failure model protocol... (Yanlong protocol)
-		}
+
+	    }
 		
-		//// Old connection gone.
 		conn.getMessageQueue().clear();
-		conn.closeCon();
 		control.connectionClosed(conn);
 	}
 

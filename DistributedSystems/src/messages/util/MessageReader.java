@@ -5,6 +5,7 @@ import java.net.SocketException;
 import java.util.concurrent.BlockingQueue;
 
 import activitystreamer.server.Connection;
+import activitystreamer.server.Reconnection;
 
 public class MessageReader extends Thread {
 	private BufferedReader reader; 
@@ -20,36 +21,26 @@ public class MessageReader extends Thread {
 	@Override
 	//This thread reads messages from the client's socket input stream
 	public void run() {
-		try {
-			
-			System.out.println(Thread.currentThread().getName() 
-					+ " - Reading messages from client connection");
-			
-			String receivedMessage = null;
-			while(this.conn.isOpen() && (receivedMessage = reader.readLine()) != null) {
-				System.out.println(Thread.currentThread().getName() 
-						+ " - Message received: " + receivedMessage);
-				//place the message in the queue for the client connection thread to process
-				MessageWrapper msg = new MessageWrapper(true, receivedMessage);
-				messageQueue.add(msg);
+		while(this.conn.isOpen()) {
+			try {			
+				String receivedMessage = null;
+				while(this.conn.isOpen() && (receivedMessage = reader.readLine()) != null) {
+					//place the message in the queue for the client connection thread to process
+					MessageWrapper msg = new MessageWrapper(true, receivedMessage);
+					messageQueue.add(msg);
+					conn.setStatus(Connection.STATUS_CONN_OK);
+				}
+				
+				conn.setStatus(Connection.STATUS_CONN_ERROR);
+				break;
+				
+			} catch (SocketException e) {
+				conn.setStatus(Connection.STATUS_CONN_ERROR);
+				break;
+			} catch (Exception e) {	
+				conn.setStatus(Connection.STATUS_CONN_ERROR);
+				break;
 			}
-			
-			//If the end of the stream was reached, the client closed the connection
-			//Put the exit message in the queue to allow the client connection thread to 
-			//close the socket
-			MessageWrapper exit = new MessageWrapper(false, "socket_error");
-			messageQueue.add(exit);
-			
-		} catch (SocketException e) {
-			//In some platforms like windows, when the end of stream is reached, instead
-			//of returning null, the readLine method throws a SocketException, so 
-			//do whatever you do when the while loop ends here as well
-		    MessageWrapper exit = new MessageWrapper(false, "socket_error");
-			messageQueue.add(exit);			
-		} catch (Exception e) {			
-			e.printStackTrace();
-			MessageWrapper exit = new MessageWrapper(false, "general_error");
-			messageQueue.add(exit);
 		}
 	}
 }

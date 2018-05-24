@@ -171,6 +171,7 @@ public class Control extends Thread {
 	@Override
 	public void run(){	
 		log.info("using activity interval of "+Settings.getActivityInterval()+" milliseconds");
+		int count = 0;
 		while(!term){
 			// do something with 5 second intervals in between
 			try {
@@ -182,7 +183,8 @@ public class Control extends Thread {
 			if(!term){
 				log.debug("doing activity");
 				//// Server announce every 5 seconds.
-				term=doActivity();
+				count++;
+				term=doActivity(count);
 			}
 
 		}
@@ -194,9 +196,9 @@ public class Control extends Thread {
 		listener.setTerm(true);
 	}
 
-	public boolean doActivity(){
+	public boolean doActivity(int count){
 		//// Server announce every 5 seconds.
-		return new ServerAnnounce().sendServerAnnounce();
+		return new ServerAnnounce().sendServerAnnounce(count);
 	}
 
 	public final void setTerm(boolean t){
@@ -275,7 +277,7 @@ public class Control extends Thread {
 				//// We don't want to send to the original sender
 				if (!isSender) {
 					//log.info("Msg broadcast to servers : " + msg);
-					System.out.println("I'm going to send a broadcast to only servers: " + msg);
+					//System.out.println("I'm going to send a broadcast to only servers: " + msg);
 
 					//Create the message to be placed on the threads queue
 					MessageWrapper msgForQueue = new MessageWrapper(false, msg);	
@@ -304,7 +306,7 @@ public class Control extends Thread {
 				Boolean isSender = (senderConn != null && c.equals(senderConn));
 				//// We don't want to send to the original sender
 				if (!isSender) {
-					System.out.println("I'm going to send a broadcast to all S + C: " + msg);
+					//System.out.println("I'm going to send a broadcast to all S + C: " + msg);
 
 					//Create the message to be placed on the threads queue
 					MessageWrapper msgForQueue = new MessageWrapper(false, msg);	
@@ -366,15 +368,28 @@ public class Control extends Thread {
 	 * Make a connection to another server using the supplied port and host. We use this for reconnection.
 	 * @param oldConnection
 	 */
-	public void reInitiateConnection(Connection oldConnection) {
+	public boolean reInitiateConnection(Connection oldConnection) {
 		// make a connection to another server if remote hostname is supplied
 			
 		if(Settings.getRemoteHostname()!=null){
-			try {				
-				Socket socket = new Socket(oldConnection.getHost(), oldConnection.getPort());
+			try {	
+				
+				// try to reconnect not to fast and furious :)
+				try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				log.info("I'm going to try to communicate again with server => port :" + oldConnection.getPort() + ", host : " + oldConnection.getHost());
+				Socket socket = new Socket(oldConnection.getHost(), oldConnection.getPort());				
+				
 				Connection conn = outgoingConnection(socket);
+				conn.setPort(Settings.getRemotePort());
+				conn.setHost(Settings.getRemoteHostname());				
+				conn.setIdClientServer(serverId);
 				//// Authentication to other server.
-				log.info("I'm going to authenticate...");
 				Authentication auth = new Authentication();
 				auth.doAuthentication(conn);
 
@@ -383,18 +398,19 @@ public class Control extends Thread {
 					conn.setType(Connection.TYPE_SERVER);
 					conn.setAuth(true);
 					
-					conn.setMessageQueue(oldConnection.getMessageQueue());
-					
-					oldConnection.setStatus(Connection.STATUS_CONN_DISABLED);
+					//// We add queue messages from old connection to the new connection...
+					conn.setMessageQueue(oldConnection.getMessageQueue());	
 				}
+				
+				return true;
 				
 			} catch (UnknownHostException e) {
 				log.info("The connection already exist..");
 			}catch (IOException e) {				
 				log.error("failed to make connection to "+Settings.getRemoteHostname()+":"+Settings.getRemotePort()+" :"+e);
-				System.exit(-1);
 			}
 		}
+		return false;
 	}
 	
 	/**

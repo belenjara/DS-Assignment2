@@ -3,7 +3,7 @@ package messages.util;
 public class MessageWrapper {
 	//// True if comes from a client or other server, False if is an outgoing message.
 	private boolean isFromOther;
-	
+		
 	//// The message.
 	private String message;
 	
@@ -11,6 +11,7 @@ public class MessageWrapper {
 		super();
 		this.isFromOther = isFromOther;
 		this.message = message;
+		System.out.println("Message adding to queue: " + message);
 	}
 	
 	public MessageWrapper(boolean isFromOther, Message message) {

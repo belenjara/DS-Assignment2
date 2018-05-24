@@ -69,6 +69,10 @@ public class Connection extends Thread {
 		start();
 	}
 
+	public void setOpen(boolean open) {
+		this.open = open;
+	}
+
 	/*
 	 * returns true if the message was written, otherwise false
 	 */
@@ -88,7 +92,6 @@ public class Connection extends Thread {
 				term=true;
 				inreader.close();
 				out.close();
-				messageQueue.clear();
 			} catch (IOException e) {
 				// already closed?
 				log.error("received exception closing the connection "+Settings.socketAddress(socket)+": "+e);
@@ -112,13 +115,12 @@ public class Connection extends Thread {
 				//(when the messageReader receives a message and places it on the queue
 				//or when another thread places a message on this client's queue)
 				MessageWrapper msg = null;
+				Thread.sleep(2000); // to give time to change the status of the connection
 				if (this.status.equals(STATUS_CONN_OK)) {
 					msg = messageQueue.take(); //  this method take the message from the queue and remove it.
+					log.info("I will remove.. " + msg.getMessage());
 
-					if(!msg.isFromOther() && (msg.getMessage().equals("socket_error") || msg.getMessage().equals("general_error"))) {					
-						this.status = STATUS_CONN_ERROR;					
-					}
-					else if(msg.isFromOther()) {
+					if(msg.isFromOther()) {
 						term = Control.getInstance().process(this, msg.getMessage());
 					} else {
 						//If the message is from a thread and it isn't exit, then
@@ -126,7 +128,7 @@ public class Connection extends Thread {
 						writeMsg(msg.getMessage());
 					}
 
-				} else {
+				} else if (this.status.equals(STATUS_CONN_ERROR)){
 					// We are not going to take any message from the queue for now, because something is wrong with the connection (network partition or crash).
 					// Other thread in MessageReader.java will continue filling the queue.
 					// We are going to try to reconnect to the parent or to re-send queued messages to the child (server or client)
@@ -135,13 +137,14 @@ public class Connection extends Thread {
 			}
 
 			log.debug("connection closed to "+Settings.socketAddress(socket));
-			Control.getInstance().connectionClosed(this);
-			in.close();
+			
+			//Control.getInstance().connectionClosed(this);
+			//in.close();
 		} catch (Exception e) {			
 			e.printStackTrace();
-			Control.getInstance().connectionClosed(this); //?
+		//	Control.getInstance().connectionClosed(this); //?
 		}
-		open=false;
+		//open=false;
 	}
 
 	public Socket getSocket() {
@@ -177,9 +180,7 @@ public class Connection extends Thread {
 	}
 
 	public void setMessageQueue(BlockingQueue<MessageWrapper> queue) {
-		for (MessageWrapper m : queue) {
-			this.messageQueue.add(m);
-		}
+			this.messageQueue.addAll(queue);
 	}
 
 	public boolean isIncommingConn() {

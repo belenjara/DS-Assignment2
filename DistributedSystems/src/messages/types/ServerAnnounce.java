@@ -8,11 +8,11 @@ import datalists.server.AnnouncedServer;
 import messages.util.Message;
 
 public class ServerAnnounce {	
-	public Boolean sendServerAnnounce() {
+	public Boolean sendServerAnnounce(int count) {
 		Boolean closeConn = false;
 		try {
 			Control connMan = Control.getInstance();
-			Message msg = new Message();
+			Message msg = new Message(count);
 			msg.setCommand(Message.SERVER_ANNOUNCE);
 			msg.setId(connMan.getServerId());
 			msg.setHostname(Settings.getLocalHostname());

@@ -1,5 +1,6 @@
 package messages.util;
 
+import java.util.Date;
 import java.util.HashMap;
 
 import org.apache.logging.log4j.LogManager;
@@ -7,6 +8,8 @@ import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+import activitystreamer.util.Settings;
 
 public class Message {
 	private static final Logger log = LogManager.getLogger();
@@ -72,9 +75,13 @@ public class Message {
 	public static final String LOCK_REQUEST = "LOCK_REQUEST";
 	public static final String LOCK_DENIED = "LOCK_DENIED";
 	public static final String LOCK_ALLOWED = "LOCK_ALLOWED";
-
+	private int count;
 
 	public Message() {
+	}
+	
+	public Message(int count) {
+		this.count = count;
 	}
 
 	public Message(String msg) {
@@ -159,6 +166,15 @@ public class Message {
 		if (this.load != null) {
 			jsonMsg.put(LOAD, this.load);
 		}
+		
+		if (this.count > 0) {
+			jsonMsg.put("count", this.count);
+		}
+		
+		Date date = new Date();
+		
+		
+		jsonMsg.put("ctrl", date.toString());
 
 		////TODO: see if we can return null in some cases...
 
