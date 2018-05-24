@@ -28,6 +28,7 @@ public class Message {
 	private ArrayList<RegisteredClient> clients;
 	private ArrayList<String> candidatesList;
 	private String authenticatedUser;
+	private String status;
 	
 	//// Constants
 	public static final String COMMAND = "command";
@@ -191,7 +192,8 @@ public class Message {
 	}
 
 	public void setCandidatesList(ArrayList<String> candidatesList) {
-		this.candidatesList = candidatesList;
+		this.candidatesList = new ArrayList<>();
+		this.candidatesList.addAll(candidatesList);
 	}
 
 	public ArrayList<RegisteredClient> getClients() {
@@ -199,7 +201,8 @@ public class Message {
 	}
 
 	public void setClients(ArrayList<RegisteredClient> clients) {
-		this.clients = clients;
+		this.clients = new ArrayList<RegisteredClient>();
+		this.clients.addAll(clients);
 	}
 
 	public Integer getLevel() {
@@ -324,6 +327,10 @@ public class Message {
 		if (jsonMsg.containsKey(LEVEL)) {
 			this.setLevel(Integer.parseInt(jsonMsg.get(LEVEL).toString()));
 		}
+		
+		if (jsonMsg.containsKey(STATUS)) {
+			this.status = jsonMsg.get(STATUS).toString();
+		}
 
 		if (jsonMsg.containsKey(CANDIDATE_LIST)) {		
 			JSONArray carray = (JSONArray) jsonMsg.get(CANDIDATE_LIST);
@@ -405,6 +412,10 @@ public class Message {
 		if (this.id != null && !this.id.equals("")) {
 			jsonMsg.put(ID_SERVER, this.id);
 		}
+		
+		if (this.status != null && !this.status.equals("")) {
+			jsonMsg.put(STATUS, this.status);
+		}
 
 		if (this.load != null) {
 			jsonMsg.put(LOAD, this.load);
@@ -422,7 +433,7 @@ public class Message {
 			jsonMsg.put(AUTHENTICATED_USER, this.authenticatedUser);
 		}
 
-		if (this.candidatesList != null && this.candidatesList.size() > 0) {
+		if (this.candidatesList != null) {
 			JSONArray candlist = new JSONArray();
 			for(String c : this.candidatesList) {
 				candlist.add(c);
@@ -431,7 +442,7 @@ public class Message {
 			jsonMsg.put(CANDIDATE_LIST, candlist);
 		}
 
-		if (this.clients != null && this.clients.size() > 0) {
+		if (this.clients != null) {
 			JSONArray cliList = new JSONArray();
 			for(Object c : this.clients) {
 				
@@ -465,5 +476,13 @@ public class Message {
 		jsonMsg.put(TIME_STAMP, date.toString());
 
 		return jsonMsg.toJSONString();
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}	
 }

@@ -17,17 +17,20 @@ import messages.util.MessageWrapper;
 import activitystreamer.util.Response;
 import activitystreamer.util.Settings;
 import datalists.server.AnnouncedServer;
+import datalists.server.MyLevel;
 import datalists.server.RegisteredClient;
 
 public class Control extends Thread {
 	private static final Logger log = LogManager.getLogger();
+	
 	private static ArrayList<Connection> connections;
 
 	private static ArrayList<AnnouncedServer> announcedServers;
 
 	private static ArrayList<RegisteredClient> registeredClients;
-
-
+	
+	private static MyLevel myLevelDetail;
+	
 	//// TODO: add logged clients list...
 
 	private static boolean term=false;
@@ -59,6 +62,8 @@ public class Control extends Thread {
 
 		// Initialize the announced servers list.
 		announcedServers = new ArrayList<AnnouncedServer>();
+		
+		myLevelDetail = new MyLevel();
 		
 		//// Server Id...
 		if  (Settings.getIdServer() == null || Settings.getIdServer().equals("")) {
@@ -354,6 +359,15 @@ public class Control extends Thread {
 
 	public void setServerId(String serverId) {
 		Control.serverId = serverId;
+	}
+	
+
+	public final MyLevel getMyLevelDetail() {
+		return myLevelDetail;
+	}
+
+	public void setMyLevelDetail(MyLevel levelDetail) {
+		Control.myLevelDetail = levelDetail;
 	}
 
 	/**

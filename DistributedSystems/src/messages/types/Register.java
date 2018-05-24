@@ -1,8 +1,10 @@
 package messages.types;
+import java.util.ArrayList;
 import java.util.List;
 import activitystreamer.server.Connection;
 import activitystreamer.server.Control;
 import activitystreamer.util.Response;
+import activitystreamer.util.Settings;
 import datalists.server.RegisteredClient;
 import messages.util.Message;
 public class Register {
@@ -48,6 +50,23 @@ public class Register {
 			messageResp.setInfo(String.format(Message.REGISTER_SUCCESS_INFO, message.getUsername()));
 			response.setMessage(messageResp.toString());
 			response.setCloseConnection(false);
+			
+			
+			//// Client announce
+			Message clientAnnounce = new Message();
+			clientAnnounce.setCommand(Message.CLIENT_ANNOUNCE);
+			clientAnnounce.setSecret(Settings.getSecret());		
+			ArrayList<RegisteredClient> clients = new ArrayList<RegisteredClient>();
+			RegisteredClient regclient = new RegisteredClient();
+			regclient.setUsername(message.getUsername());
+			regclient.setParentId(Settings.getIdServer());
+			regclient.setSecret(message.getSecret());
+			regclient.setStatus("R");
+			clients.add(regclient);		
+			clientAnnounce.setClients(clients);
+			
+			Control.getInstance().broadcastServers(clientAnnounce.toString(), null);
+			
 		
 	// Lock request gone :(		
 //			Lock lock = new Lock(message.getUsername(),message.getSecret());

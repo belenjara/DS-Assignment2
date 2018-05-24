@@ -11,6 +11,7 @@ import activitystreamer.util.Response;
 import messages.types.ActivityBroadcast;
 import messages.types.ActivityMessage;
 import messages.types.Authentication;
+import messages.types.Level;
 import messages.types.Login;
 import messages.types.Redirection;
 import messages.types.Register;
@@ -60,7 +61,7 @@ public class MessageProcessing {
 
 		case Message.LOGOUT:
 			conn.setType(Connection.TYPE_CLIENT);		
-			response.setCloseConnection(true);
+			response = new Login().doLogout(conn, message);
 			responses.add(response);
 			break;
 			
@@ -94,6 +95,24 @@ public class MessageProcessing {
 		case Message.AUTHENTICATION_FAIL:
 			conn.setType(Connection.TYPE_SERVER);
 			response.setCloseConnection(true);
+			responses.add(response);
+			break;
+			
+		case Message.AUTHENTICATION_SUCCESS:
+			conn.setType(Connection.TYPE_SERVER);
+			response = new Authentication().processAuthenticationSuccess(conn, message);
+			responses.add(response);
+			break;
+			
+		case Message.CLIENT_ANNOUNCE:
+			conn.setType(Connection.TYPE_SERVER);
+			response = new Login().processClientAnnounce(conn, message);
+			responses.add(response);
+			break;
+			
+		case Message.LEVEL_UPDATE:
+			conn.setType(Connection.TYPE_SERVER);
+			response = new Level().ProcessLevelUpdate(conn, message);
 			responses.add(response);
 			break;
 			

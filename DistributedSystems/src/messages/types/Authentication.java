@@ -1,5 +1,7 @@
 package messages.types;
 
+import java.util.ArrayList;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -7,6 +9,8 @@ import activitystreamer.server.Connection;
 import activitystreamer.server.Control;
 import activitystreamer.util.Response;
 import activitystreamer.util.Settings;
+import datalists.server.MyLevel;
+import datalists.server.RegisteredClient;
 import messages.util.Message;
 import messages.util.MessageWrapper;
 
@@ -57,10 +61,19 @@ public class Authentication {
 			return response;
 		}	 
 		
-		// do nothing if the authentication succeeded.
 		conn.setAuth(true);
 		conn.setIdClientServer(msg.getId());
-		response.setMessage(null); //// here we have to add the new response of authentication....
+		
+		//// here we have to add the new response of authentication....
+		Message msgResp = new Message();
+		msgResp.setCommand(Message.AUTHENTICATION_SUCCESS);
+		msgResp.setId(Settings.getIdServer());
+		msgResp.setSecret(Settings.getSecret());
+		msgResp.setClients(connMan.getRegisteredClients());
+		msgResp.setCandidatesList(connMan.getMyLevelDetail().getCandidateList());
+		msgResp.setLevel(connMan.getMyLevelDetail().getLevel());
+				
+		response.setMessage(msgResp.toString()); 
 		response.setCloseConnection(false);
 		return response;
 	}
@@ -87,6 +100,85 @@ public class Authentication {
 		//// we don't use this write method directly, 
 		//// we put every message in the queue of the connection to be send (see Connection.java)	
 		////conn.writeMsg(msgStr);
+	}
+	
+	public Response processAuthenticationSuccess(Connection conn, Message msg) {
+		Response response = new Response();
+		Control connMan = Control.getInstance();
+		
+		msg = Message.CheckMessage(msg, Message.ID_SERVER);
+		if (msg.getCommand().equals(Message.INVALID_MESSAGE)) {
+			response.setCloseConnection(true);
+			response.setMessage(msg.toString());
+			return response;
+		}
+		
+		msg = Message.CheckMessage(msg, Message.SECRET);
+		if (msg.getCommand().equals(Message.INVALID_MESSAGE)) {
+			response.setCloseConnection(true);
+			response.setMessage(msg.toString());
+			return response;
+		}
+		
+		msg = Message.CheckMessage(msg, Message.CLIENTS);
+		if (msg.getCommand().equals(Message.INVALID_MESSAGE)) {
+			response.setCloseConnection(true);
+			response.setMessage(msg.toString());
+			return response;
+		}
+		
+		msg = Message.CheckMessage(msg, Message.CANDIDATE_LIST);
+		if (msg.getCommand().equals(Message.INVALID_MESSAGE)) {
+			response.setCloseConnection(true);
+			response.setMessage(msg.toString());
+			return response;
+		}
+		
+		msg = Message.CheckMessage(msg, Message.LEVEL);
+		if (msg.getCommand().equals(Message.INVALID_MESSAGE)) {
+			response.setCloseConnection(true);
+			response.setMessage(msg.toString());
+			return response;
+		}
+			
+		ArrayList<RegisteredClient> clients = msg.getClients();		
+		ArrayList<RegisteredClient> regClients = connMan.getRegisteredClients();		
+		boolean clientFound;
+		for(RegisteredClient c : clients) {	
+			clientFound= false;
+			for (RegisteredClient rc :regClients) {
+				if (c.getUsername().equals(rc.getUsername())) {
+					rc.setSecret(c.getSecret());
+					rc.setStatus(c.getStatus());
+					rc.setParentId(c.getParentId());
+					clientFound = true;
+					break;
+				}
+			}
+			
+			if (!clientFound) {
+				regClients.add(c);
+			}	
+		}
+		
+		MyLevel myLevel = new MyLevel();
+		//// My level = Parent level +1
+		myLevel.setLevel(msg.getLevel()+1);		
+		//// Initialize list of candidates..
+		ArrayList<String> regCandidates = myLevel.getCandidateList();
+		regCandidates.clear();
+		//// First in the list: me.
+		regCandidates.add(Settings.getIdServer());
+		//// Then the elements of my parents candidate list.
+		regCandidates.addAll(msg.getCandidatesList());
+		myLevel.setCandidateList(regCandidates);		
+		connMan.setMyLevelDetail(myLevel);
+		
+//		conn.setAuth(true);
+		//conn.setIdClientServer(msg.getId());
+		response.setMessage(null);
+		response.setCloseConnection(false);
+		return response;	
 	}
 
 }
