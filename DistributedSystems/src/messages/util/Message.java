@@ -23,13 +23,17 @@ public class Message {
 	private Integer level = -1;
 	private int sequence;
 	private HashMap<String, Object> activity;
-	
+
 	//// New fields
 	private ArrayList<RegisteredClient> clients;
 	private ArrayList<String> candidatesList;
+	private ArrayList<String> childsList;
 	private String authenticatedUser;
 	private String status;
-	
+	private RegisteredClient client;
+	private String idMessage;
+
+
 	//// Constants
 	public static final String COMMAND = "command";
 	public static final String INFO = "info";
@@ -80,30 +84,34 @@ public class Message {
 	public static final String AUTHENTICATION_FAIL = "AUTHENTICATION_FAIL";
 	public static final String AUTHENTICATION_FAIL_INFO = "the supplied secret is incorrect: %s";
 
-//	public static final String LOCK_REQUEST = "LOCK_REQUEST";
-//	public static final String LOCK_DENIED = "LOCK_DENIED";
-//	public static final String LOCK_ALLOWED = "LOCK_ALLOWED";
+	//	public static final String LOCK_REQUEST = "LOCK_REQUEST";
+	//	public static final String LOCK_DENIED = "LOCK_DENIED";
+	//	public static final String LOCK_ALLOWED = "LOCK_ALLOWED";
 
-	
+
 	//// New messages and attributes
 	public static final String AUTHENTICATION_SUCCESS = "AUTHENTICATION_SUCCESS";
 	public static final String CLIENT_ANNOUNCE = "CLIENT_ANNOUNCE";
 	public static final String LEVEL_UPDATE = "LEVEL_UPDATE";
 	public static final String ACTIVITY_BROADCAST_RESERVE = "ACTIVITY_BROADCAST_RESERVE";
 	public static final String ACTIVITY_BROADCAST_RESEND = "ACTIVITY_BROADCAST_RESEND";
-		
+
 	// not sure if I will finish this :(
 	public static final String MESSAGES_CHECK_LIST = "MESSAGES_CHECK_LIST"; 
 	public static final String SERVER_LOGOUT = "SERVER_LOGOUT";
 
 	public static final String SEQUENCE = "sequence";
 	public static final String CLIENTS = "clients";
+	public static final String CLIENT = "client";
 	public static final String PARENT_ID = "parent_id";
 	public static final String STATUS = "status";
 	public static final String CANDIDATE_LIST = "candidate_list";
 	public static final String LEVEL = "level";
 	public static final String TIME_STAMP = "time_stamp";
-
+	public static final String ID_MESSAGE = "ID_MESSAGE";
+	
+	public static final String CHILDS_ID = "CHILDS_ID";
+	
 
 	public Message() {
 	}
@@ -195,6 +203,15 @@ public class Message {
 		this.candidatesList = new ArrayList<>();
 		this.candidatesList.addAll(candidatesList);
 	}
+	
+	public ArrayList<String> getChildsList() {
+		return childsList;
+	}
+
+	public void setChildsList(ArrayList<String> childsList) {
+		this.childsList = new ArrayList<>();
+		this.childsList.addAll(childsList);
+	}
 
 	public ArrayList<RegisteredClient> getClients() {
 		return clients;
@@ -212,7 +229,7 @@ public class Message {
 	public void setLevel(Integer level) {
 		this.level = level;
 	}
-	
+
 	public String getAuthenticatedUser() {
 		return authenticatedUser;
 	}
@@ -226,6 +243,30 @@ public class Message {
 		this.info = ERROR_COMMAND_INFO;
 
 		return this.toString();
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public RegisteredClient getClient() {
+		return client;
+	}
+
+	public void setClient(RegisteredClient client) {
+		this.client = client;
+	}	
+
+	public String getIdMessage() {
+		return idMessage;
+	}
+
+	public void setIdMessage(String idMessage) {
+		this.idMessage = idMessage;
 	}
 
 	public static Message CheckMessage(Message msg, String property) {
@@ -299,9 +340,33 @@ public class Message {
 		if (jsonMsg.containsKey(LOAD)) {
 			this.load = Integer.parseInt(jsonMsg.get(LOAD).toString());
 		}
-		
+
 		if (jsonMsg.containsKey(AUTHENTICATED_USER)) {
 			this.authenticatedUser = jsonMsg.get(AUTHENTICATED_USER).toString();
+		}
+
+		if (jsonMsg.containsKey(ID_MESSAGE)) {
+			this.idMessage = jsonMsg.get(ID_MESSAGE).toString();
+		}
+
+		if (jsonMsg.containsKey(CLIENT)) {
+			JSONObject jsonCli = null;
+			this.client = new RegisteredClient();
+			try {
+				jsonCli = (JSONObject)jsonMsg.get(CLIENT);
+				if (jsonCli.containsKey(USERNAME)) {
+					this.client.setUsername(jsonCli.get(USERNAME).toString());
+				}
+
+				if (jsonCli.containsKey(SECRET)) {
+					this.client.setSecret(jsonCli.get(SECRET).toString());
+				}	
+			}catch (Exception e) {
+				// INVALID MSG
+				this.setCommand(INVALID_MESSAGE);
+				this.setInfo(ERROR_JSON_INFO);
+				return;
+			}
 		}
 
 		if (jsonMsg.containsKey(ACTIVITY)) {
@@ -327,7 +392,7 @@ public class Message {
 		if (jsonMsg.containsKey(LEVEL)) {
 			this.setLevel(Integer.parseInt(jsonMsg.get(LEVEL).toString()));
 		}
-		
+
 		if (jsonMsg.containsKey(STATUS)) {
 			this.status = jsonMsg.get(STATUS).toString();
 		}
@@ -340,32 +405,49 @@ public class Message {
 				candidatesList.add(c.toString());
 			}	
 		}
+		
+		if (jsonMsg.containsKey(CHILDS_ID)) {		
+			JSONArray carray = (JSONArray) jsonMsg.get(CHILDS_ID);
+
+			this.childsList = new ArrayList<String>();
+			for(Object c : carray) {
+				childsList.add(c.toString());
+			}	
+		}
 
 		if (jsonMsg.containsKey(CLIENTS)) {
-			JSONArray jarray = (JSONArray) jsonMsg.get(CLIENTS);
-			this.clients = new ArrayList<RegisteredClient>();
 
-			for(Object a : jarray) {
-				JSONObject jclient = (JSONObject) a;
-				RegisteredClient rc = new RegisteredClient();
+			try {
+				JSONArray jarray = (JSONArray) jsonMsg.get(CLIENTS);
+				this.clients = new ArrayList<RegisteredClient>();
 
-				if (jclient.containsKey(USERNAME)) {
-					rc.setUsername(jclient.get(USERNAME).toString());
+				for(Object a : jarray) {
+					JSONObject jclient = (JSONObject) a;
+					RegisteredClient rc = new RegisteredClient();
+
+					if (jclient.containsKey(USERNAME)) {
+						rc.setUsername(jclient.get(USERNAME).toString());
+					}
+
+					if (jclient.containsKey(SECRET)) {
+						rc.setSecret(jclient.get(SECRET).toString());
+					}
+
+					if (jclient.containsKey(STATUS)) {
+						rc.setStatus(jclient.get(STATUS).toString());
+					}
+
+					if (jclient.containsKey(PARENT_ID)) {
+						rc.setParentId(jclient.get(PARENT_ID).toString());
+					}
+
+					this.clients.add(rc);
 				}
-
-				if (jclient.containsKey(SECRET)) {
-					rc.setSecret(jclient.get(SECRET).toString());
-				}
-
-				if (jclient.containsKey(STATUS)) {
-					rc.setStatus(jclient.get(STATUS).toString());
-				}
-
-				if (jclient.containsKey(PARENT_ID)) {
-					rc.setParentId(jclient.get(PARENT_ID).toString());
-				}
-
-				this.clients.add(rc);
+			}catch (Exception e) {
+				// INVALID MSG
+				this.setCommand(INVALID_MESSAGE);
+				this.setInfo(ERROR_JSON_INFO);
+				return;
 			}
 		}
 	}
@@ -384,6 +466,19 @@ public class Message {
 
 			jsonMsg.put(ACTIVITY, jsonAct);
 		}
+
+		if (this.client != null) {
+			JSONObject jsonAct = new JSONObject();
+
+			if (this.client.getUsername() != null && this.client.getUsername().equals("")) {
+				jsonAct.put(USERNAME, this.client.getUsername());
+			}
+
+			if (this.client.getSecret() != null && this.client.getSecret().equals("")) {
+				jsonAct.put(SECRET, this.client.getSecret());
+			}
+		}
+
 
 		if (this.port > 0) {
 			jsonMsg.put(PORT, this.port);
@@ -412,7 +507,7 @@ public class Message {
 		if (this.id != null && !this.id.equals("")) {
 			jsonMsg.put(ID_SERVER, this.id);
 		}
-		
+
 		if (this.status != null && !this.status.equals("")) {
 			jsonMsg.put(STATUS, this.status);
 		}
@@ -428,7 +523,7 @@ public class Message {
 		if (this.level > -1) {
 			jsonMsg.put(LEVEL, this.level);
 		}
-		
+
 		if (this.authenticatedUser != null && !this.authenticatedUser.equals("")) {
 			jsonMsg.put(AUTHENTICATED_USER, this.authenticatedUser);
 		}
@@ -438,18 +533,27 @@ public class Message {
 			for(String c : this.candidatesList) {
 				candlist.add(c);
 			}
-			
+
 			jsonMsg.put(CANDIDATE_LIST, candlist);
+		}
+		
+		if (this.childsList != null) {
+			JSONArray childlist = new JSONArray();
+			for(String c : this.childsList) {
+				childlist.add(c);
+			}
+
+			jsonMsg.put(CHILDS_ID, childlist);
 		}
 
 		if (this.clients != null) {
 			JSONArray cliList = new JSONArray();
 			for(Object c : this.clients) {
-				
+
 				JSONObject cjson = (JSONObject)c;
-				
+
 				RegisteredClient client = new RegisteredClient();
-				
+
 				if (cjson.containsKey(USERNAME)) {
 					client.setUsername(cjson.get(USERNAME).toString());
 				}
@@ -465,10 +569,10 @@ public class Message {
 				if (cjson.containsKey(PARENT_ID)) {
 					client.setParentId(cjson.get(PARENT_ID).toString());
 				}
-				
+
 				cliList.add(c);
 			}
-			
+
 			jsonMsg.put(CLIENTS, cliList);
 		}
 
@@ -477,12 +581,4 @@ public class Message {
 
 		return jsonMsg.toJSONString();
 	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}	
 }

@@ -1,6 +1,9 @@
 package activitystreamer.server;
 
+import java.util.ArrayList;
+
 import activitystreamer.util.Settings;
+import datalists.server.AnnouncedServer;
 
 public class Reconnection  {
 
@@ -40,10 +43,10 @@ public class Reconnection  {
 		conn.closeCon();		
 		boolean status = false;
 
+		//// Normal reconnection, within time limit.
 		while ((System.currentTimeMillis()) < duration) {
 			System.out.println("........... try to reconnect ...........");
-
-			status = control.reInitiateConnection(conn);	
+			status = control.reInitiateConnection(Settings.getLocalHostname(), Settings.getLocalPort(), conn.getMessageQueue());	
 			if (status == true){
 				break;
 			}
@@ -51,9 +54,47 @@ public class Reconnection  {
 
 		//// I could not connect again, I assumed the other server crashed. 	
 		if (!status) {
-
 			//// TODO: failure model protocol... (Yanlong protocol)
 
+			//// My parent is the root, I'm a level 1 node.
+			if (control.getMyLevelDetail().getLevel() == 1) {
+				if (control.getMyLevelDetail().isImPotentialRoot()) {
+				   control.getMyLevelDetail().setLevel(0);
+				   control.getMyLevelDetail().getCandidateList().clear();
+				   control.getMyLevelDetail().getCandidateList().add(Settings.getIdServer());
+				   
+				   //// I will not connect with any other server, just wait until others servers come and through server announce 
+				   //// eventually my old child will update their levels (hopefully).
+				}
+				else {
+					//// I will connect to the last child of my (ex) parent
+					ArrayList<String> candidateList = control.getMyLevelDetail().getCandidateList();
+					String canditate = candidateList.get(candidateList.size()-1); //the one after my (ex) parent.	
+					for (AnnouncedServer s : control.getAnnouncedServers()) {
+						if (s.getServerId().equals(canditate)) {
+							System.out.println(".. trying to connect to the last candidate (new root) => port : " + s.getPort() + " , host : " + s.getHostname() + " ..");
+							status = control.reInitiateConnection(s.getHostname(), s.getPort(), conn.getMessageQueue());	
+							if (status == true){
+								break;
+							}
+						}
+					}
+				}
+			}
+			else {
+				//// I'm not a level root node. My level is > 1.   
+				ArrayList<String> candidateList = control.getMyLevelDetail().getCandidateList();
+				String canditate = candidateList.get(2); //the one after my (ex) parent.	
+				for (AnnouncedServer s : control.getAnnouncedServers()) {
+					if (s.getServerId().equals(canditate)) {
+						System.out.println(".. trying to connect to the next candidate => port : " + s.getPort() + " , host : " + s.getHostname() + " ..");
+						status = control.reInitiateConnection(s.getHostname(), s.getPort(), conn.getMessageQueue());	
+						if (status == true){
+							break;
+						}
+					}
+				}
+			}
 		}
 
 		conn.setOpen(false);

@@ -17,10 +17,12 @@ public class MessageWrapper {
 		System.out.println("Message adding to queue: " + message);
 	}
 	
-	public MessageWrapper(boolean isFromOther, Message message) {
+	public MessageWrapper(boolean isFromOther, Message message, boolean closeConnection) {
 		super();
 		this.isFromOther = isFromOther;
 		this.message = message.toString();
+		this.closeConnection = closeConnection;
+		System.out.println("Message adding to queue: " + message);
 	}
 	
 	public boolean isFromOther() {

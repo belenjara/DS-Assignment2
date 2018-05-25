@@ -84,7 +84,6 @@ public class Login {
 			//// Client announce
 			Message clientAnnounce = new Message();
 			clientAnnounce.setCommand(Message.CLIENT_ANNOUNCE);
-			clientAnnounce.setSecret(Settings.getSecret());		
 			ArrayList<RegisteredClient> clients = new ArrayList<RegisteredClient>();
 			RegisteredClient regclient = new RegisteredClient();
 			regclient.setUsername(username);
@@ -109,7 +108,6 @@ public class Login {
 		//// Client announce
 		Message clientAnnounce = new Message();
 		clientAnnounce.setCommand(Message.CLIENT_ANNOUNCE);
-		clientAnnounce.setSecret(Settings.getSecret());		
 		ArrayList<RegisteredClient> clients = new ArrayList<RegisteredClient>();
 		RegisteredClient regclient = new RegisteredClient();
 		regclient.setUsername(conn.getIdClientServer());

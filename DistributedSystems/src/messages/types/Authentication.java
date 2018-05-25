@@ -65,13 +65,7 @@ public class Authentication {
 		conn.setIdClientServer(msg.getId());
 		
 		//// here we have to add the new response of authentication....
-		Message msgResp = new Message();
-		msgResp.setCommand(Message.AUTHENTICATION_SUCCESS);
-		msgResp.setId(Settings.getIdServer());
-		msgResp.setSecret(Settings.getSecret());
-		msgResp.setClients(connMan.getRegisteredClients());
-		msgResp.setCandidatesList(connMan.getMyLevelDetail().getCandidateList());
-		msgResp.setLevel(connMan.getMyLevelDetail().getLevel());
+		Message msgResp = sendAuthenticationSuccessful(conn, msg);
 				
 		response.setMessage(msgResp.toString()); 
 		response.setCloseConnection(false);
@@ -102,18 +96,14 @@ public class Authentication {
 		////conn.writeMsg(msgStr);
 	}
 	
+	/**
+	 * Authentication success!
+	 */
 	public Response processAuthenticationSuccess(Connection conn, Message msg) {
 		Response response = new Response();
 		Control connMan = Control.getInstance();
 		
 		msg = Message.CheckMessage(msg, Message.ID_SERVER);
-		if (msg.getCommand().equals(Message.INVALID_MESSAGE)) {
-			response.setCloseConnection(true);
-			response.setMessage(msg.toString());
-			return response;
-		}
-		
-		msg = Message.CheckMessage(msg, Message.SECRET);
 		if (msg.getCommand().equals(Message.INVALID_MESSAGE)) {
 			response.setCloseConnection(true);
 			response.setMessage(msg.toString());
@@ -128,6 +118,13 @@ public class Authentication {
 		}
 		
 		msg = Message.CheckMessage(msg, Message.CANDIDATE_LIST);
+		if (msg.getCommand().equals(Message.INVALID_MESSAGE)) {
+			response.setCloseConnection(true);
+			response.setMessage(msg.toString());
+			return response;
+		}
+		
+		msg = Message.CheckMessage(msg, Message.CHILDS_ID);
 		if (msg.getCommand().equals(Message.INVALID_MESSAGE)) {
 			response.setCloseConnection(true);
 			response.setMessage(msg.toString());
@@ -161,24 +158,26 @@ public class Authentication {
 			}	
 		}
 		
-		MyLevel myLevel = new MyLevel();
-		//// My level = Parent level +1
-		myLevel.setLevel(msg.getLevel()+1);		
-		//// Initialize list of candidates..
-		ArrayList<String> regCandidates = myLevel.getCandidateList();
-		regCandidates.clear();
-		//// First in the list: me.
-		regCandidates.add(Settings.getIdServer());
-		//// Then the elements of my parents candidate list.
-		regCandidates.addAll(msg.getCandidatesList());
-		myLevel.setCandidateList(regCandidates);		
-		connMan.setMyLevelDetail(myLevel);
-		
-//		conn.setAuth(true);
-		//conn.setIdClientServer(msg.getId());
+		connMan.updateLevelDetail(msg, msg.getId());
+
 		response.setMessage(null);
 		response.setCloseConnection(false);
 		return response;	
+	}
+	
+	public Message sendAuthenticationSuccessful(Connection conn, Message msg) {
+		Response response = new Response();
+		Control connMan = Control.getInstance();
+
+		Message message = new Message();
+		message.setCommand(Message.AUTHENTICATION_SUCCESS);
+		message.setId(Settings.getIdServer());
+		message.setLevel(connMan.getMyLevelDetail().getLevel());
+		message.setClients(connMan.getRegisteredClients());
+		message.setChildsList(connMan.getServersConnected());
+		message.setCandidatesList(connMan.getMyLevelDetail().getCandidateList());
+		
+		return message;
 	}
 
 }

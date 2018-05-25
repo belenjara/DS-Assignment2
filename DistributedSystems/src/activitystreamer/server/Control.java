@@ -1,17 +1,18 @@
 package activitystreamer.server;
 
 import java.io.IOException;
-import java.net.BindException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import messages.types.Authentication;
 import messages.types.ServerAnnounce;
+import messages.util.Message;
 import messages.util.MessageProcessing;
 import messages.util.MessageWrapper;
 import activitystreamer.util.Response;
@@ -22,15 +23,15 @@ import datalists.server.RegisteredClient;
 
 public class Control extends Thread {
 	private static final Logger log = LogManager.getLogger();
-	
+
 	private static ArrayList<Connection> connections;
 
 	private static ArrayList<AnnouncedServer> announcedServers;
 
 	private static ArrayList<RegisteredClient> registeredClients;
-	
+
 	private static MyLevel myLevelDetail;
-	
+
 	//// TODO: add logged clients list...
 
 	private static boolean term=false;
@@ -62,9 +63,9 @@ public class Control extends Thread {
 
 		// Initialize the announced servers list.
 		announcedServers = new ArrayList<AnnouncedServer>();
-		
+
 		myLevelDetail = new MyLevel();
-		
+
 		//// Server Id...
 		if  (Settings.getIdServer() == null || Settings.getIdServer().equals("")) {
 			setServerId(Settings.nextSecret());
@@ -87,9 +88,9 @@ public class Control extends Thread {
 				Connection conn = outgoingConnection(new Socket(Settings.getRemoteHostname(), Settings.getRemotePort()));				
 				conn.setPort(Settings.getRemotePort());
 				conn.setHost(Settings.getRemoteHostname());			
-				
+
 				conn.setIdClientServer(serverId);
-				
+
 				//// Authentication to other server.
 				log.info("I'm going to authenticate...");
 				Authentication auth = new Authentication();
@@ -106,6 +107,9 @@ public class Control extends Thread {
 				log.error("failed to make connection to "+Settings.getRemoteHostname()+":"+Settings.getRemotePort()+" :"+e);
 				System.exit(-1);
 			}
+		}
+		else {
+			myLevelDetail.setLevel(0);
 		}
 	}
 
@@ -343,6 +347,20 @@ public class Control extends Thread {
 		return countClients;	
 	}
 
+	public final ArrayList<String> getServersConnected(){		
+		List<Connection> connections = Control.getInstance().getConnections();
+		ArrayList<String> ids = new ArrayList<String>();
+		for(Connection c : connections) {
+			if (c.getType() == Connection.TYPE_SERVER && c.getAuth() && c.isOpen()) {
+				if (c.getIdClientServer() != null && !c.getIdClientServer().equals("")) {
+					ids.add(c.getIdClientServer());
+				}
+			}
+		}
+
+		return ids;	
+	}
+
 	/**
 	 * @return number of servers connected.
 	 */
@@ -360,7 +378,7 @@ public class Control extends Thread {
 	public void setServerId(String serverId) {
 		Control.serverId = serverId;
 	}
-	
+
 
 	public final MyLevel getMyLevelDetail() {
 		return myLevelDetail;
@@ -374,12 +392,12 @@ public class Control extends Thread {
 	 * Make a connection to another server using the supplied port and host. We use this for reconnection.
 	 * @param oldConnection
 	 */
-	public boolean reInitiateConnection(Connection oldConnection) {
+	public boolean reInitiateConnection(String hostname, int port, BlockingQueue<MessageWrapper> messageQueue) {
 		// make a connection to another server if remote hostname is supplied
-			
+
 		if(Settings.getRemoteHostname()!=null){
 			try {	
-				
+
 				// try to reconnect not to fast and furious :)
 				try {
 					Thread.sleep(1000);
@@ -388,9 +406,9 @@ public class Control extends Thread {
 					e.printStackTrace();
 				}
 
-				log.info("I'm going to try to communicate again with server => port :" + oldConnection.getPort() + ", host : " + oldConnection.getHost());
-				Socket socket = new Socket(oldConnection.getHost(), oldConnection.getPort());				
-				
+				log.info("I'm going to try to communicate again with server => port :" + port + ", host : " + hostname);
+				Socket socket = new Socket(hostname, port);				
+
 				Connection conn = outgoingConnection(socket);
 				conn.setPort(Settings.getRemotePort());
 				conn.setHost(Settings.getRemoteHostname());				
@@ -403,13 +421,13 @@ public class Control extends Thread {
 					//// The connection is updated, type server is specified and that is authenticated.
 					conn.setType(Connection.TYPE_SERVER);
 					conn.setAuth(true);
-					
+
 					//// We add queue messages from old connection to the new connection...
-					conn.setMessageQueue(oldConnection.getMessageQueue());	
+					conn.setMessageQueue(messageQueue);	
 				}
-				
+
 				return true;
-				
+
 			} catch (UnknownHostException e) {
 				log.info("The connection already exist..");
 			}catch (IOException e) {				
@@ -418,7 +436,7 @@ public class Control extends Thread {
 		}
 		return false;
 	}
-	
+
 	/**
 	 We use this method to add into the queue of a new connection the messages of an old connection queue.
 	 * This is used when a child connection is lost and we try to re-send the messages to this child when is back. 
@@ -433,7 +451,7 @@ public class Control extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		log.info("I'm going to try to send queued messages if there is an active connection of client/server => " + conn.getIdClientServer());
 		for (Connection c : connections) {
 			if (c.getAuth() && c.isOpen()) {
@@ -444,7 +462,69 @@ public class Control extends Thread {
 				}
 			}
 		}
-		
+
 		return false;
+	}
+
+	public void updateLevelDetail(Message msg, String parentId) {
+		MyLevel level = getMyLevelDetail();
+		ArrayList<String> candidates = level.getCandidateList();
+		if (parentId == null && candidates != null && candidates.size() > 1) {
+			parentId = candidates.get(1);		
+		}
+
+		if (parentId != null) {
+			//// Is my parent
+			if (msg.getId().equals(parentId)) {		
+				//// My level = Parent level +1
+				level.setLevel(msg.getLevel()+1);		
+				//// MY parent is the root, so I have to update my candidate list
+				if (msg.getLevel() == 0) {
+					//// Initialize list of candidates..
+					ArrayList<String> regCandidates = new ArrayList<String>();
+					//// First in the list: me.
+					regCandidates.add(Settings.getIdServer());
+					//// Second in the list: my parent.
+					regCandidates.add(parentId);
+					
+					int count = 0;
+					int myOrder = 0;
+					//// Then the elements of my parents child list, except me.
+					for(String child : msg.getChildsList()) {
+						count++;
+						if (!child.equals(Settings.getIdServer())) {
+							regCandidates.add(child);
+						}
+						else {
+							myOrder = count;
+						}
+					}	
+					
+					//// If I'm the last child of the root, I'm the potential root if the current root crashes.
+					if (myOrder == count) {
+						level.setImPotentialRoot(true);
+					}
+					else {
+						level.setImPotentialRoot(false);
+					}
+					
+					level.setCandidateList(regCandidates);	
+				}
+				else
+				{
+					// I'm not a level one server, I just going to update candidate list with my parent's candidate list
+					///// Initialize list of candidates..
+					ArrayList<String> regCandidates = new ArrayList<String>();
+					//// First in the list: me.
+					regCandidates.add(Settings.getIdServer());
+					//// Then the elements of my parents candidate list.
+					regCandidates.addAll(msg.getCandidatesList());
+					level.setCandidateList(regCandidates);		
+				}
+
+				setMyLevelDetail(level);
+			}
+		}
+
 	}
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import activitystreamer.server.Connection;
 import activitystreamer.server.Control;
 import activitystreamer.util.Response;
+import activitystreamer.util.Settings;
 import datalists.server.MyLevel;
 import messages.util.Message;
 
@@ -47,16 +48,18 @@ public class Level {
 			return response;
 		}
 
-		MyLevel level = Control.getInstance().getMyLevelDetail();
+		MyLevel level = connMan.getMyLevelDetail();
 		ArrayList<String> candidates = level.getCandidateList();
 		if (candidates != null && candidates.size() > 1) {
-			String parentId = candidates.get(1);
+			String parentId = candidates.get(1);		
+			//// Is my parent
 			if (msg.getId().equals(parentId)) {
-				level.setLevel(msg.getLevel()+1);
-				Control.getInstance().setMyLevelDetail(level);
+				level.setLevel(msg.getLevel()+1); // update the level	
 			}
 		}
-		
+
+		connMan.setMyLevelDetail(level);
+
 		response.setMessage(null);
 		response.setCloseConnection(false);
 		return response;

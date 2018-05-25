@@ -37,8 +37,9 @@ public class Server {
 		options.addOption("rh",true,"remote hostname");
 		options.addOption("lh",true,"local hostname");
 		options.addOption("a",true,"activity interval in milliseconds");
-		options.addOption("s",true,"secret for the server to use");
-		
+		options.addOption("s",true,"secret for the server to use");		
+		options.addOption("id",true,"id for the server to use");
+
 		
 		// build the parser
 		CommandLineParser parser = new DefaultParser();

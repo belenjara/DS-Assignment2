@@ -6,13 +6,14 @@ public class AnnouncedServer {
     private String hostname;
     private int port;
     private int load;
-    
-   
+    private int level;
+      
     public AnnouncedServer(Message msg) {
     	this.setServerId(msg.getId());
     	this.setHostname(msg.getHostname());
     	this.setPort(msg.getPort());
     	this.setLoad(msg.getLoad());
+    	this.setLevel(msg.getLevel());
 	 }
     
     public String getServerId() {
@@ -45,5 +46,13 @@ public class AnnouncedServer {
 
 	public void setPort(int port) {
 		this.port = port;
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
 	}
 }

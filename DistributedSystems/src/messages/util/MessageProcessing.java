@@ -116,6 +116,15 @@ public class MessageProcessing {
 			responses.add(response);
 			break;
 			
+//		case Message.ACTIVITY_BROADCAST_RESERVE:
+//			break;
+//			
+//		case Message.ACTIVITY_BROADCAST_RESEND:
+//			break;
+			
+			
+			
+			
 //		case Message.LOCK_ALLOWED:
 //			conn.setType(Connection.TYPE_SERVER);
 //			Lock lockAllowed = new Lock(message.getUsername(), message.getSecret());
