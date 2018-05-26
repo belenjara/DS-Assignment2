@@ -1,7 +1,6 @@
 package activitystreamer.server;
 
 import java.util.ArrayList;
-
 import activitystreamer.util.Settings;
 import datalists.server.AnnouncedServer;
 
@@ -59,6 +58,8 @@ public class Reconnection  {
 			//// My parent is the root, I'm a level 1 node.
 			if (control.getMyLevelDetail().getLevel() == 1) {
 				if (control.getMyLevelDetail().isImPotentialRoot()) {
+				   System.out.println("I will be the new root  => " + Settings.getIdServer() + ". I will wait for new connections...");
+				   Settings.setRemoteHostname(null);
 				   control.getMyLevelDetail().setLevel(0);
 				   control.getMyLevelDetail().getCandidateList().clear();
 				   control.getMyLevelDetail().getCandidateList().add(Settings.getIdServer());
@@ -75,6 +76,8 @@ public class Reconnection  {
 							System.out.println(".. trying to connect to the last candidate (new root) => port : " + s.getPort() + " , host : " + s.getHostname() + " ..");
 							status = control.reInitiateConnection(s.getHostname(), s.getPort(), conn.getMessageQueue());	
 							if (status == true){
+								Settings.setRemoteHostname(s.getHostname());
+								Settings.setRemotePort(s.getPort());
 								break;
 							}
 						}
@@ -90,6 +93,8 @@ public class Reconnection  {
 						System.out.println(".. trying to connect to the next candidate => port : " + s.getPort() + " , host : " + s.getHostname() + " ..");
 						status = control.reInitiateConnection(s.getHostname(), s.getPort(), conn.getMessageQueue());	
 						if (status == true){
+							Settings.setRemoteHostname(s.getHostname());
+							Settings.setRemotePort(s.getPort());
 							break;
 						}
 					}

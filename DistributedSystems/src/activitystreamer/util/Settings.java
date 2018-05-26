@@ -20,7 +20,7 @@ public class Settings {
 	private static int reConnTimeLimit = 25000; // milliseconds
 	private static int reSendTimeLimit = 10500; // milliseconds
 	
-	private static String idServer = null;//"pedrito";
+	private static String idServer = null;
 
 	
 	public static int getLocalPort() {
