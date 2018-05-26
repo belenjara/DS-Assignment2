@@ -9,7 +9,6 @@ import activitystreamer.server.Connection;
 import activitystreamer.server.Control;
 import activitystreamer.util.Response;
 import activitystreamer.util.Settings;
-import datalists.server.MyLevel;
 import datalists.server.RegisteredClient;
 import messages.util.Message;
 import messages.util.MessageWrapper;
@@ -146,7 +145,7 @@ public class Authentication {
 			for (RegisteredClient rc :regClients) {
 				if (c.getUsername().equals(rc.getUsername())) {
 					rc.setSecret(c.getSecret());
-					rc.setStatus(c.getStatus());
+					//rc.setStatus(c.getStatus());
 					rc.setParentId(c.getParentId());
 					clientFound = true;
 					break;
@@ -166,7 +165,6 @@ public class Authentication {
 	}
 	
 	public Message sendAuthenticationSuccessful(Connection conn, Message msg) {
-		Response response = new Response();
 		Control connMan = Control.getInstance();
 
 		Message message = new Message();

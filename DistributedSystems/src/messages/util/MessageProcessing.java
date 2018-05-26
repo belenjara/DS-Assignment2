@@ -11,7 +11,6 @@ import activitystreamer.util.Response;
 import messages.types.ActivityBroadcast;
 import messages.types.ActivityMessage;
 import messages.types.Authentication;
-import messages.types.Level;
 import messages.types.Login;
 import messages.types.Redirection;
 import messages.types.Register;
@@ -38,13 +37,6 @@ public class MessageProcessing {
 			response = new Register().doRegistration(conn, message);
 			responses.add(response);
 			break;
-		
-//		case Message.LOCK_REQUEST:
-//			conn.setType(Connection.TYPE_SERVER);
-//			Lock lockrequest = new Lock(message.getUsername(), message.getSecret());
-//			response = lockrequest.receiveLockRequest(conn, message);
-//			responses.add(response);
-//			break;
 			
 		case Message.LOGIN:
 			conn.setType(Connection.TYPE_CLIENT);
@@ -109,35 +101,6 @@ public class MessageProcessing {
 			response = new Login().processClientAnnounce(conn, message);
 			responses.add(response);
 			break;
-			
-		case Message.LEVEL_UPDATE:
-			conn.setType(Connection.TYPE_SERVER);
-			response = new Level().ProcessLevelUpdate(conn, message);
-			responses.add(response);
-			break;
-			
-//		case Message.ACTIVITY_BROADCAST_RESERVE:
-//			break;
-//			
-//		case Message.ACTIVITY_BROADCAST_RESEND:
-//			break;
-			
-			
-			
-			
-//		case Message.LOCK_ALLOWED:
-//			conn.setType(Connection.TYPE_SERVER);
-//			Lock lockAllowed = new Lock(message.getUsername(), message.getSecret());
-//			response = lockAllowed.receiveLockAllowed(conn, message);
-//			responses.add(response);
-//			break;
-						
-//		case Message.LOCK_DENIED:
-//			conn.setType(Connection.TYPE_SERVER);
-//			Lock lockDenied = new Lock(message.getUsername(), message.getSecret());
-//			response = lockDenied.receiveLockDenied(conn, message);
-//			responses.add(response);
-//			break;
 			
 		case Message.INVALID_MESSAGE:
 			response.setMessage(message.toString());

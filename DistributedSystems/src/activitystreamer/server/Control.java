@@ -67,11 +67,11 @@ public class Control extends Thread {
 		myLevelDetail = new MyLevel();
 
 		//// Server Id...
-		if  (Settings.getIdServer() == null || Settings.getIdServer().equals("")) {
+//		if  (Settings.getIdServer() == null || Settings.getIdServer().equals("")) {
 			setServerId(Settings.nextSecret());
-		}else {
-			setServerId(Settings.getIdServer());
-		}
+//		}else {
+//			setServerId(Settings.getIdServer());
+//		}
 
 		initiateConnection();
 

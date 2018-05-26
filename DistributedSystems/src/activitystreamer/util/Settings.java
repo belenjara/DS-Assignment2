@@ -17,8 +17,8 @@ public class Settings {
 	private static int activityInterval = 5000; // milliseconds
 	private static String secret = "jfjkdjgkdfjg";
 	private static String username = "anonymous";
-	private static int reConnTimeLimit = 25000; // milliseconds
-	private static int reSendTimeLimit = 10500; // milliseconds
+//	private static int reConnTimeLimit = 120000; // milliseconds
+//	private static int reSendTimeLimit = 10500; // milliseconds
 	
 	private static String idServer = null;
 
@@ -86,7 +86,6 @@ public class Settings {
 	public static void setLocalHostname(String localHostname) {
 		Settings.localHostname = localHostname;
 	}
-
 	
 	/*
 	 * some general helper functions
@@ -100,21 +99,21 @@ public class Settings {
 	    return new BigInteger(130, random).toString(32);
 	 }
 
-	public static int getConnTimeLimit() {
-		return reConnTimeLimit;
-	}
-
-	public static void setConnTimeLimit(int connTimeLimit) {
-		Settings.reConnTimeLimit = connTimeLimit;
-	}
-
-	public static int getReSendTimeLimit() {
-		return reSendTimeLimit;
-	}
-
-	public static void setReSendTimeLimit(int reSendTimeLimit) {
-		Settings.reSendTimeLimit = reSendTimeLimit;
-	}
+//	public static int getConnTimeLimit() {
+//		return reConnTimeLimit;
+//	}
+//
+//	public static void setConnTimeLimit(int connTimeLimit) {
+//		Settings.reConnTimeLimit = connTimeLimit;
+//	}
+//
+//	public static int getReSendTimeLimit() {
+//		return reSendTimeLimit;
+//	}
+//
+//	public static void setReSendTimeLimit(int reSendTimeLimit) {
+//		Settings.reSendTimeLimit = reSendTimeLimit;
+//	}
 
 	public static String getIdServer() {
 		return idServer;
@@ -122,9 +121,5 @@ public class Settings {
 
 	public static void setIdServer(String idServer) {
 		Settings.idServer = idServer;
-	}
-
-
-
-	
+	}	
 }

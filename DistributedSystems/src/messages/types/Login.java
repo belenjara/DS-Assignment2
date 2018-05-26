@@ -88,7 +88,7 @@ public class Login {
 			regclient.setUsername(username);
 			regclient.setParentId(Settings.getIdServer());
 			regclient.setSecret(enteredSecret);
-			regclient.setStatus("IN");
+			//regclient.setStatus("IN");
 			clients.add(regclient);		
 			clientAnnounce.setClients(clients);
 			
@@ -114,7 +114,7 @@ public class Login {
 		regclient.setUsername(conn.getIdClientServer());
 		regclient.setParentId(Settings.getIdServer());
 		//regclient.setSecret(enteredSecret);
-		regclient.setStatus("OUT");
+		//regclient.setStatus("OUT");
 		clients.add(regclient);		
 		clientAnnounce.setClients(clients);
 
@@ -166,7 +166,7 @@ public class Login {
 					if (c.getSecret() != null) {
 						rc.setSecret(c.getSecret());
 					}
-					rc.setStatus(c.getStatus());
+					//rc.setStatus(c.getStatus());
 					
 					if (c.getParentId() != null) {
 						rc.setParentId(c.getParentId());

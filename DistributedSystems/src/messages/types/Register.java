@@ -62,33 +62,11 @@ public class Register {
 			regclient.setUsername(message.getUsername());
 			regclient.setParentId(Settings.getIdServer());
 			regclient.setSecret(message.getSecret());
-			regclient.setStatus("R");
+			//regclient.setStatus("R");
 			clients.add(regclient);		
 			clientAnnounce.setClients(clients);
 			
-			Control.getInstance().broadcastServers(clientAnnounce.toString(), null);
-			
-		
-	// Lock request gone :(		
-//			Lock lock = new Lock(message.getUsername(),message.getSecret());
-//
-//			Response responselock = lock.sendLockRequest(conn);
-//
-//			if (responselock.getMessage() != null) {
-//				Message msglock = new Message(responselock.getMessage());
-//
-//				if (msglock.getCommand().equals(Message.REGISTER_SUCCESS)) {
-//					RegisteredClient client = new RegisteredClient();		
-//					client.setUsername(message.getUsername());
-//					client.setSecret(message.getSecret());
-//					Control.getInstance().addRegisteredClients(client) ;
-//					messageResp.setCommand(Message.REGISTER_SUCCESS);
-//					messageResp.setInfo(String.format(Message.REGISTER_SUCCESS_INFO, message.getUsername()));
-//					response.setMessage(messageResp.toString());
-//					response.setCloseConnection(false);
-//					System.out.println("ok");
-//				}
-//			}	
+			Control.getInstance().broadcastServers(clientAnnounce.toString(), null);	
 			
 		}	// This server knows the client.
 		else if(check_client(registeredClients, message.getUsername()) == true){

@@ -34,8 +34,8 @@ public class Reconnection  {
 	 */ 
 	private void reconnectParent() {
 
-		long startTime = System.currentTimeMillis();
-		long duration = startTime + Settings.getConnTimeLimit();
+//		long startTime = System.currentTimeMillis();
+//		long duration = startTime + Settings.getConnTimeLimit();
 		Control control = Control.getInstance();
 
 		//// Old connection gone.
@@ -43,16 +43,16 @@ public class Reconnection  {
 		boolean status = false;
 
 		//// Normal reconnection, within time limit.
-		while ((System.currentTimeMillis()) < duration) {
-			System.out.println("........... try to reconnect ...........");
-			status = control.reInitiateConnection(Settings.getRemoteHostname(), Settings.getRemotePort(), conn.getMessageQueue());	
-			if (status == true){
-				break;
-			}
-		}
+//		while ((System.currentTimeMillis()) < duration) {
+//			System.out.println("........... try to reconnect ...........");
+//			status = control.reInitiateConnection(Settings.getRemoteHostname(), Settings.getRemotePort(), conn.getMessageQueue());	
+//			if (status == true){
+//				break;
+//			}
+//		}
 
 		//// I could not connect again, I assumed the other server crashed. 	
-		if (!status) {
+//		if (!status) {
 			//// TODO: failure model protocol... (Yanlong protocol)
 
 			//// My parent is the root, I'm a level 1 node.
@@ -99,7 +99,7 @@ public class Reconnection  {
 						}
 					}
 				}
-			}
+//			}
 		}
 
 		conn.setOpen(false);
@@ -112,28 +112,28 @@ public class Reconnection  {
 	 */
 	private void reSendChildMsgQueue() {
 
-		long startTime = System.currentTimeMillis();
-		long duration = startTime + Settings.getConnTimeLimit();
+//		long startTime = System.currentTimeMillis();
+//		long duration = startTime + Settings.getConnTimeLimit();
 		Control control = Control.getInstance();
 
-		//// Old connection gone.
-		conn.setStatus(Connection.STATUS_CONN_DISABLED);
+//		//// Old connection gone.
+//		conn.setStatus(Connection.STATUS_CONN_DISABLED);
 		conn.closeCon();		
-		boolean status = false;
-
-		while ((System.currentTimeMillis()) < duration) {
-			System.out.println("........... try to re-send messages to server/client ...........");
-			status = control.transferMsgQueue(conn);
-			////if the old connection is closed, it means that the old queue  messages were added in the new connection queue.
-			if (status == true){
-				break;
-			}
-		}
-
-		if (!status) {
-			//// announce that this client/server is dead? something went wrong..
-			//// if is a client maybe I have to send the queue to the root... (the other protocol aim time T, set X)
-		}
+//		boolean status = false;
+//
+//		while ((System.currentTimeMillis()) < duration) {
+//			System.out.println("........... try to re-send messages to server/client ...........");
+//			status = control.transferMsgQueue(conn);
+//			////if the old connection is closed, it means that the old queue  messages were added in the new connection queue.
+//			if (status == true){
+//				break;
+//			}
+//		}
+//
+//		if (!status) {
+//			//// announce that this client/server is dead? something went wrong..
+//			//// if is a client maybe I have to send the queue to the root... (the other protocol aim time T, set X)
+//		}
 
 		conn.setOpen(false);
 		conn.getMessageQueue().clear();

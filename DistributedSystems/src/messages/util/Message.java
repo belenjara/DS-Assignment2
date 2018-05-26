@@ -83,21 +83,10 @@ public class Message {
 	public static final String AUTHENTICATION_FAIL = "AUTHENTICATION_FAIL";
 	public static final String AUTHENTICATION_FAIL_INFO = "the supplied secret is incorrect: %s";
 
-	//	public static final String LOCK_REQUEST = "LOCK_REQUEST";
-	//	public static final String LOCK_DENIED = "LOCK_DENIED";
-	//	public static final String LOCK_ALLOWED = "LOCK_ALLOWED";
-
 
 	//// New messages and attributes
 	public static final String AUTHENTICATION_SUCCESS = "AUTHENTICATION_SUCCESS";
 	public static final String CLIENT_ANNOUNCE = "CLIENT_ANNOUNCE";
-	public static final String LEVEL_UPDATE = "LEVEL_UPDATE";
-	public static final String ACTIVITY_BROADCAST_RESERVE = "ACTIVITY_BROADCAST_RESERVE";
-	public static final String ACTIVITY_BROADCAST_RESEND = "ACTIVITY_BROADCAST_RESEND";
-
-	// not sure if I will finish this :(
-	public static final String MESSAGES_CHECK_LIST = "MESSAGES_CHECK_LIST"; 
-	public static final String SERVER_LOGOUT = "SERVER_LOGOUT";
 
 	public static final String SEQUENCE = "sequence";
 	public static final String CLIENTS = "clients";
@@ -107,9 +96,8 @@ public class Message {
 	public static final String CANDIDATE_LIST = "candidate_list";
 	public static final String LEVEL = "level";
 	public static final String TIME_STAMP = "time_stamp";
-	public static final String ID_MESSAGE = "ID_MESSAGE";
-
-	public static final String CHILDS_ID = "CHILDS_ID";
+	//public static final String ID_MESSAGE = "ID_MESSAGE";
+	public static final String CHILDS_ID = "childs_id";
 
 
 	public Message() {
@@ -344,9 +332,9 @@ public class Message {
 			this.authenticatedUser = jsonMsg.get(AUTHENTICATED_USER).toString();
 		}
 
-		if (jsonMsg.containsKey(ID_MESSAGE)) {
-			this.idMessage = jsonMsg.get(ID_MESSAGE).toString();
-		}
+//		if (jsonMsg.containsKey(ID_MESSAGE)) {
+//			this.idMessage = jsonMsg.get(ID_MESSAGE).toString();
+//		}
 
 		if (jsonMsg.containsKey(CLIENT)) {
 			JSONObject jsonCli = null;
@@ -432,9 +420,9 @@ public class Message {
 						rc.setSecret(jclient.get(SECRET).toString());
 					}
 
-					if (jclient.containsKey(STATUS)) {
-						rc.setStatus(jclient.get(STATUS).toString());
-					}
+//					if (jclient.containsKey(STATUS)) {
+//						rc.setStatus(jclient.get(STATUS).toString());
+//					}
 
 					if (jclient.containsKey(PARENT_ID)) {
 						rc.setParentId(jclient.get(PARENT_ID).toString());
@@ -563,9 +551,9 @@ public class Message {
 					cjson.put(PARENT_ID, c.getParentId());
 				}
 				
-				if (c.getStatus() != null) {
-					cjson.put(STATUS, c.getStatus());
-				}
+//				if (c.getStatus() != null) {
+//					cjson.put(STATUS, c.getStatus());
+//				}
 
 				cliList.add(cjson);
 			}

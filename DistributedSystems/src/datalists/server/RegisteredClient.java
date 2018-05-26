@@ -3,7 +3,7 @@ package datalists.server;
 public class RegisteredClient {
     private String username;
     private String secret;
-    private String status;
+    //private String status;
     private String parentId;
     
 	public String getUsername() {
@@ -18,12 +18,12 @@ public class RegisteredClient {
 	public void setSecret(String secret) {
 		this.secret = secret;
 	}
-	public String getStatus() {
-		return status;
-	}
-	public void setStatus(String status) {
-		this.status = status;
-	}
+//	public String getStatus() {
+//		return status;
+//	}
+//	public void setStatus(String status) {
+//		this.status = status;
+//	}
 	public String getParentId() {
 		return parentId;
 	}
