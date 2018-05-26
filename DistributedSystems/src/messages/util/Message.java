@@ -33,7 +33,6 @@ public class Message {
 	private RegisteredClient client;
 	private String idMessage;
 
-
 	//// Constants
 	public static final String COMMAND = "command";
 	public static final String INFO = "info";
@@ -109,9 +108,9 @@ public class Message {
 	public static final String LEVEL = "level";
 	public static final String TIME_STAMP = "time_stamp";
 	public static final String ID_MESSAGE = "ID_MESSAGE";
-	
+
 	public static final String CHILDS_ID = "CHILDS_ID";
-	
+
 
 	public Message() {
 	}
@@ -203,7 +202,7 @@ public class Message {
 		this.candidatesList = new ArrayList<>();
 		this.candidatesList.addAll(candidatesList);
 	}
-	
+
 	public ArrayList<String> getChildsList() {
 		return childsList;
 	}
@@ -405,7 +404,7 @@ public class Message {
 				candidatesList.add(c.toString());
 			}	
 		}
-		
+
 		if (jsonMsg.containsKey(CHILDS_ID)) {		
 			JSONArray carray = (JSONArray) jsonMsg.get(CHILDS_ID);
 
@@ -536,7 +535,7 @@ public class Message {
 
 			jsonMsg.put(CANDIDATE_LIST, candlist);
 		}
-		
+
 		if (this.childsList != null) {
 			JSONArray childlist = new JSONArray();
 			for(String c : this.childsList) {
@@ -548,29 +547,27 @@ public class Message {
 
 		if (this.clients != null) {
 			JSONArray cliList = new JSONArray();
-			for(Object c : this.clients) {
+			for(RegisteredClient c : this.clients) {
 
-				JSONObject cjson = (JSONObject)c;
+				JSONObject cjson = new JSONObject();
 
-				RegisteredClient client = new RegisteredClient();
-
-				if (cjson.containsKey(USERNAME)) {
-					client.setUsername(cjson.get(USERNAME).toString());
+				if (c.getUsername() != null) {
+					cjson.put(USERNAME, c.getUsername());
+				}
+				
+				if (c.getSecret() != null) {
+					cjson.put(SECRET, c.getSecret());
+				}
+				
+				if (c.getParentId() != null) {
+					cjson.put(PARENT_ID, c.getParentId());
+				}
+				
+				if (c.getStatus() != null) {
+					cjson.put(STATUS, c.getStatus());
 				}
 
-				if (cjson.containsKey(SECRET)) {
-					client.setSecret(cjson.get(SECRET).toString());
-				}
-
-				if (cjson.containsKey(STATUS)) {
-					client.setStatus(cjson.get(STATUS).toString());
-				}
-
-				if (cjson.containsKey(PARENT_ID)) {
-					client.setParentId(cjson.get(PARENT_ID).toString());
-				}
-
-				cliList.add(c);
+				cliList.add(cjson);
 			}
 
 			jsonMsg.put(CLIENTS, cliList);

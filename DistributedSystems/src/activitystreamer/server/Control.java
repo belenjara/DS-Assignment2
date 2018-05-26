@@ -410,8 +410,8 @@ public class Control extends Thread {
 				Socket socket = new Socket(hostname, port);				
 
 				Connection conn = outgoingConnection(socket);
-				conn.setPort(Settings.getRemotePort());
-				conn.setHost(Settings.getRemoteHostname());				
+				conn.setPort(port);
+				conn.setHost(hostname);				
 				conn.setIdClientServer(serverId);
 				//// Authentication to other server.
 				Authentication auth = new Authentication();

@@ -62,7 +62,6 @@ public class Login {
 			msg.setCommand(Message.LOGIN_SUCCESS);
 			msg.setInfo(String.format(Message.LOGIN_SUCCESS_INFO, username));
 			response.setCloseConnection(false);
-			conn.setIdClientServer(username);
 			conn.setAuth(true);
 			//System.out.println("login success as anonymous!");
 
@@ -92,6 +91,8 @@ public class Login {
 			regclient.setStatus("IN");
 			clients.add(regclient);		
 			clientAnnounce.setClients(clients);
+			
+			conn.setIdClientServer(msg.getUsername());
 
 			Control.getInstance().broadcastServers(clientAnnounce.toString(), null);
 		}

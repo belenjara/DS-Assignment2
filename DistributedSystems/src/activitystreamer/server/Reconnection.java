@@ -46,7 +46,7 @@ public class Reconnection  {
 		//// Normal reconnection, within time limit.
 		while ((System.currentTimeMillis()) < duration) {
 			System.out.println("........... try to reconnect ...........");
-			status = control.reInitiateConnection(Settings.getLocalHostname(), Settings.getLocalPort(), conn.getMessageQueue());	
+			status = control.reInitiateConnection(Settings.getRemoteHostname(), Settings.getRemotePort(), conn.getMessageQueue());	
 			if (status == true){
 				break;
 			}

@@ -51,6 +51,8 @@ public class Register {
 			response.setMessage(messageResp.toString());
 			response.setCloseConnection(false);
 			
+			conn.setIdClientServer(message.getUsername());
+			
 			
 			//// Client announce
 			Message clientAnnounce = new Message();

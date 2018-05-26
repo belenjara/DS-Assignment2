@@ -10,17 +10,17 @@ import org.apache.logging.log4j.Logger;
 public class Settings {
 	private static final Logger log = LogManager.getLogger();
 	private static SecureRandom random = new SecureRandom();
-	private static int localPort = 3783;
+	private static int localPort = 3780;
 	private static String localHostname = "localhost";
 	private static String remoteHostname = null;//"localhost";//"ec2-34-214-180-1.us-west-2.compute.amazonaws.com";
-	private static int remotePort = 3782;
+	private static int remotePort = 3780;
 	private static int activityInterval = 5000; // milliseconds
 	private static String secret = "jfjkdjgkdfjg";
 	private static String username = "anonymous";
-	private static int reConnTimeLimit = 50000; // milliseconds
+	private static int reConnTimeLimit = 25000; // milliseconds
 	private static int reSendTimeLimit = 10500; // milliseconds
 	
-	private static String idServer = "juanita";
+	private static String idServer = null;//"pedrito";
 
 	
 	public static int getLocalPort() {
